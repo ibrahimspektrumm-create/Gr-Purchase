@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GR Purchase — اختيار المحل</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;900&family=IBM+Plex+Mono:wght@400;500;600&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --void:#020408;--deep:#050B14;--surface:#080F1C;--card:#0E1B2E;--elevated:#121F35;
+  --border-dim:#0D2040;--border:#133058;--border-mid:#1A4070;
+  --cyan:#00D4FF;--cyan-lo:#0099CC;--cyan-glow:rgba(0,212,255,0.18);
+  --blue:#0070FF;--purple:#8B5CF6;--amber:#F59E0B;--green:#10B981;--red:#EF4444;
+  --tx-hi:#E8F4FF;--tx-mid:#6B8EB5;--tx-lo:#2A4060;--tx-dim:#162030;
+  --f-ui:'Cairo',sans-serif;--f-mono:'IBM Plex Mono',monospace;--f-display:'Orbitron',sans-serif;
+  --t-mid:0.22s cubic-bezier(0.4,0,0.2,1);--r-lg:16px;--r-xl:24px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden}
+body{font-family:var(--f-ui);background:var(--void);color:var(--tx-hi);-webkit-font-smoothing:antialiased}
+button{font-family:var(--f-ui);cursor:pointer;border:none;background:none;color:inherit}
+
+/* Background */
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.bg-grid{position:absolute;inset:0;
+  background-image:linear-gradient(rgba(0,212,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.03) 1px,transparent 1px);
+  background-size:48px 48px;animation:gridDrift 60s linear infinite}
+@keyframes gridDrift{100%{background-position:48px 48px}}
+.bg-glow{position:absolute;width:700px;height:700px;border-radius:50%;
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  background:radial-gradient(circle,rgba(0,112,255,0.06) 0%,transparent 70%);
+  animation:breathe 6s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.08)}}
+.bg-scan{position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,212,255,0.006) 3px,rgba(0,212,255,0.006) 4px)}
+.particle{position:absolute;border-radius:50%;animation:floatUp linear infinite;opacity:0}
+@keyframes floatUp{0%{transform:translateY(100vh);opacity:0}10%{opacity:0.6}90%{opacity:0.2}100%{transform:translateY(-10vh);opacity:0}}
+
+/* Layout */
+.page{position:relative;z-index:1;width:100%;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:32px}
+
+/* Top bar */
+.top-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  width:100%;max-width:920px;
+}
+.tb-user{display:flex;align-items:center;gap:12px}
+.tb-avatar{width:40px;height:40px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;
+  border:1px solid rgba(0,212,255,0.2);flex-shrink:0}
+.tb-name{font-size:14px;font-weight:600;color:var(--tx-hi)}
+.tb-role{font-size:11px;font-family:var(--f-mono);color:var(--tx-mid);margin-top:2px}
+.tb-logo{font-family:var(--f-display);font-size:13px;font-weight:700;color:var(--cyan);
+  letter-spacing:0.15em;text-shadow:0 0 16px rgba(0,212,255,0.4)}
+.logout-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;
+  border:1px solid var(--border);border-radius:var(--r-lg);
+  font-size:12px;color:var(--tx-mid);transition:var(--t-mid)}
+.logout-btn:hover{border-color:rgba(239,68,68,0.3);color:var(--red);background:rgba(239,68,68,0.06)}
+.logout-btn svg{width:13px;height:13px}
+
+/* Header */
+.header{text-align:center}
+.header h1{font-family:var(--f-display);font-size:18px;font-weight:700;color:var(--tx-hi);
+  letter-spacing:0.08em;margin-bottom:8px}
+.header p{font-size:13px;font-family:var(--f-mono);color:var(--tx-mid)}
+.header .hint{
+  display:inline-flex;align-items:center;gap:6px;margin-top:10px;
+  font-size:11px;font-family:var(--f-mono);color:var(--tx-dim);
+  padding:4px 12px;background:rgba(0,212,255,0.04);
+  border:1px solid var(--border-dim);border-radius:20px;
+}
+.hint-dot{width:5px;height:5px;border-radius:50%;background:var(--cyan);
+  box-shadow:0 0 6px var(--cyan);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* Branch grid */
+.branches-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:16px;width:100%;max-width:920px;
+}
+
+/* Branch card */
+.branch-card{
+  background:linear-gradient(160deg,rgba(14,27,46,0.95),rgba(8,15,28,0.98));
+  border:1px solid var(--border);border-radius:var(--r-xl);
+  padding:28px 24px;
+  display:flex;flex-direction:column;align-items:center;gap:16px;
+  cursor:pointer;transition:var(--t-mid);position:relative;overflow:hidden;
+  text-align:center;
+  animation:cardIn 0.5s cubic-bezier(0.2,0,0,1) both;
+}
+@keyframes cardIn{from{opacity:0;transform:translateY(20px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+.branch-card:nth-child(1){animation-delay:0.05s}
+.branch-card:nth-child(2){animation-delay:0.12s}
+.branch-card:nth-child(3){animation-delay:0.19s}
+.branch-card:nth-child(4){animation-delay:0.26s}
+
+/* Top gradient line */
+.branch-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--card-color,var(--cyan)),transparent);
+  opacity:0.4;transition:opacity var(--t-mid)}
+.branch-card::after{content:'';position:absolute;inset:0;border-radius:var(--r-xl);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,0.03);pointer-events:none}
+
+.branch-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 12px 40px rgba(0,0,0,0.5),0 0 32px var(--card-glow,rgba(0,212,255,0.08));
+  border-color:var(--card-color,var(--cyan));
+}
+.branch-card:hover::before{opacity:0.8}
+.branch-card.locked{cursor:not-allowed;opacity:0.45;filter:grayscale(0.4)}
+.branch-card.locked:hover{transform:none;box-shadow:none;border-color:var(--border)}
+
+/* Card icon */
+.card-icon{
+  width:64px;height:64px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--f-display);font-size:22px;font-weight:900;
+  position:relative;flex-shrink:0;
+  transition:var(--t-mid);
+}
+.branch-card:hover .card-icon{transform:scale(1.08)}
+.card-icon .ring{
+  position:absolute;inset:-6px;border-radius:50%;
+  border:1px solid var(--card-color,var(--cyan));
+  opacity:0.2;transition:opacity var(--t-mid);
+}
+.branch-card:hover .card-icon .ring{opacity:0.6;animation:ringPulse 1.5s ease-in-out infinite}
+@keyframes ringPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+
+/* Card content */
+.card-label{font-size:10px;font-family:var(--f-mono);color:var(--tx-dim);
+  text-transform:uppercase;letter-spacing:0.12em}
+.card-name{font-size:17px;font-weight:700;color:var(--tx-hi);line-height:1.2}
+.card-id{font-size:11px;font-family:var(--f-mono);color:var(--tx-mid);margin-top:4px}
+
+/* Stats row */
+.card-stats{display:flex;gap:16px;margin-top:4px}
+.cs-item{display:flex;flex-direction:column;align-items:center;gap:2px}
+.cs-val{font-family:var(--f-display);font-size:15px;font-weight:700;color:var(--tx-hi)}
+.cs-lbl{font-size:9px;font-family:var(--f-mono);color:var(--tx-dim);text-transform:uppercase;letter-spacing:0.05em}
+
+/* Enter button */
+.card-enter{
+  width:100%;height:38px;
+  border-radius:var(--r-lg);
+  font-size:13px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  transition:var(--t-mid);
+  border:1px solid var(--card-color,var(--cyan));
+  color:var(--card-color,var(--cyan));
+  background:transparent;
+  opacity:0;transform:translateY(4px);
+}
+.branch-card:hover .card-enter{opacity:1;transform:translateY(0)}
+.branch-card:hover .card-enter:hover{
+  background:var(--card-color,var(--cyan));color:#000;
+  box-shadow:0 0 20px var(--card-glow,rgba(0,212,255,0.3));
+}
+.card-enter svg{width:13px;height:13px}
+
+/* Lock badge */
+.lock-badge{
+  position:absolute;top:12px;left:12px;
+  display:flex;align-items:center;gap:5px;
+  font-size:10px;font-family:var(--f-mono);
+  color:var(--tx-mid);
+  padding:3px 8px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:20px;
+}
+.lock-badge svg{width:10px;height:10px}
+
+/* Activity badge */
+.activity-badge{
+  position:absolute;top:12px;right:12px;
+  width:8px;height:8px;border-radius:50%;
+  background:var(--green);box-shadow:0 0 8px var(--green);
+  animation:blink 2s ease-in-out infinite;
+}
+
+/* Last access */
+.last-access{
+  font-size:10px;font-family:var(--f-mono);color:var(--tx-dim);
+  margin-top:-8px;
+}
+
+/* Footer hint */
+.page-footer{
+  font-size:11px;font-family:var(--f-mono);color:var(--tx-dim);
+  display:flex;align-items:center;gap:8px;
+}
+
+/* Loading overlay */
+.loading-overlay{
+  position:fixed;inset:0;z-index:100;
+  background:rgba(2,4,8,0.9);backdrop-filter:blur(8px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
+  opacity:0;pointer-events:none;transition:opacity 0.3s;
+}
+.loading-overlay.show{opacity:1;pointer-events:auto}
+.lo-icon{
+  width:72px;height:72px;border-radius:50%;
+  background:linear-gradient(135deg,rgba(0,212,255,0.1),rgba(0,112,255,0.08));
+  border:1px solid rgba(0,212,255,0.3);
+  display:flex;align-items:center;justify-content:center;font-size:30px;
+  animation:iconPulse 1.5s ease-in-out infinite;
+}
+@keyframes iconPulse{0%,100%{box-shadow:0 0 20px rgba(0,212,255,0.2)}50%{box-shadow:0 0 40px rgba(0,212,255,0.4)}}
+.lo-title{font-family:var(--f-display);font-size:14px;color:var(--cyan);letter-spacing:0.12em}
+.lo-sub{font-size:12px;font-family:var(--f-mono);color:var(--tx-mid)}
+.lo-bar{width:240px;height:2px;background:var(--border);border-radius:2px;overflow:hidden}
+.lo-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--blue));border-radius:2px;
+  animation:loadBar 1.2s cubic-bezier(0.4,0,0.2,1) forwards}
+@keyframes loadBar{from{width:0}to{width:100%}}
+
+@media(max-width:600px){.branches-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:400px){.branches-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+  <div class="bg-scan"></div>
+  <div id="particles"></div>
+</div>
+
+<div class="page">
+  <!-- Top bar -->
+  <div class="top-bar">
+    <div class="tb-user">
+      <div class="tb-avatar" id="userAvatar" style="background:rgba(0,212,255,0.12);color:#00D4FF">أح</div>
+      <div>
+        <div class="tb-name" id="userName">أحمد محمود</div>
+        <div class="tb-role" id="userRole">مدير النظام</div>
+      </div>
+    </div>
+    <div class="tb-logo">GR·PURCHASE</div>
+    <button class="logout-btn" onclick="doLogout()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+      خروج
+    </button>
+  </div>
+
+  <!-- Header -->
+  <div class="header">
+    <h1>اختر المحل</h1>
+    <p>// تحديد نقطة العمل للجلسة الحالية</p>
+    <div class="hint">
+      <span class="hint-dot"></span>
+      <span id="hintText">لديك صلاحية الوصول لـ 4 محلات</span>
+    </div>
+  </div>
+
+  <!-- Branches Grid -->
+  <div class="branches-grid" id="branchesGrid"></div>
+
+  <!-- Footer -->
+  <div class="page-footer">
+    <span>// اختيار المحل يحدد قاعدة البيانات المرتبطة بالجلسة</span>
+  </div>
+</div>
+
+<!-- Loading overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="lo-icon" id="loadingIcon">◈</div>
+  <div class="lo-title" id="loadingTitle">تحميل المحل</div>
+  <div class="lo-sub"  id="loadingBranch">جارٍ الاتصال بقاعدة البيانات...</div>
+  <div class="lo-bar"><div class="lo-fill"></div></div>
+</div>
+
+<script>
+/* ── CONFIG ── */
+const BRANCHES_CONFIG = [
+  {
+    id:'branch-01', label:'B1', name:'المحل الأول',  city:'برلين',
+    color:'#00D4FF', glow:'rgba(0,212,255,0.15)', bg:'rgba(0,212,255,0.08)',
+    cols:12, rows:347, lastAccess:'منذ 2 ساعة', active:true,
+  },
+  {
+    id:'branch-02', label:'B2', name:'المحل الثاني', city:'هامبورغ',
+    color:'#10B981', glow:'rgba(16,185,129,0.15)', bg:'rgba(16,185,129,0.08)',
+    cols:8, rows:212, lastAccess:'أمس', active:true,
+  },
+  {
+    id:'branch-03', label:'B3', name:'المحل الثالث', city:'ميونخ',
+    color:'#8B5CF6', glow:'rgba(139,92,246,0.15)', bg:'rgba(139,92,246,0.08)',
+    cols:10, rows:0, lastAccess:'قبل 3 أيام', active:false,
+  },
+  {
+    id:'branch-04', label:'B4', name:'المحل الرابع', city:'فرانكفورت',
+    color:'#F59E0B', glow:'rgba(245,158,11,0.15)', bg:'rgba(245,158,11,0.08)',
+    cols:0, rows:0, lastAccess:'لم يُستخدم بعد', active:false,
+  },
+];
+
+/* ── INIT ── */
+window.addEventListener('DOMContentLoaded', () => {
+  const session = loadSession();
+  if (!session) { window.location.href = 'index.html'; return; }
+
+  initParticles();
+  renderUser(session);
+  renderBranches(session);
+});
+
+function loadSession() {
+  try {
+    const raw = localStorage.getItem('gr_session');
+    if (!raw) return null;
+    const s = JSON.parse(raw);
+    if (s.expires < Date.now()) { localStorage.removeItem('gr_session'); return null; }
+    return s;
+  } catch(e) { return null; }
+}
+
+/* ── USER ── */
+function renderUser(session) {
+  const initials = session.name.split(' ').map(w=>w[0]).join('').slice(0,2);
+  document.getElementById('userAvatar').textContent = initials;
+  document.getElementById('userName').textContent   = session.name;
+  document.getElementById('userRole').textContent   = session.role === 'admin' ? 'مدير النظام' : 'مستخدم';
+  document.getElementById('hintText').textContent   =
+    `لديك صلاحية الوصول لـ ${session.branches?.length ?? 0} محلات`;
+}
+
+/* ── BRANCHES ── */
+function renderBranches(session) {
+  const grid      = document.getElementById('branchesGrid');
+  const allowed   = session.branches ?? [];
+  const isAdmin   = session.role === 'admin';
+
+  grid.innerHTML = BRANCHES_CONFIG.map(b => {
+    const hasAccess = isAdmin || allowed.includes(b.id);
+
+    return `
+    <div class="branch-card ${hasAccess ? '' : 'locked'}"
+         style="--card-color:${b.color};--card-glow:${b.glow}"
+         onclick="${hasAccess ? `enterBranch('${b.id}','${b.name}')` : 'showNoAccess()'}">
+
+      ${!hasAccess ? `<div class="lock-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        محظور
+      </div>` : b.active ? '<div class="activity-badge"></div>' : ''}
+
+      <div class="card-icon" style="background:${b.bg};border:1px solid ${b.color}33;color:${b.color}">
+        <div class="ring" style="border-color:${b.color}"></div>
+        ${b.label}
+      </div>
+
+      <div>
+        <div class="card-label">// محل رقم ${BRANCHES_CONFIG.indexOf(b)+1}</div>
+        <div class="card-name">${b.name}</div>
+        <div class="card-id" style="color:${b.color}66">${b.id} · ${b.city}</div>
+      </div>
+
+      <div class="card-stats">
+        <div class="cs-item">
+          <div class="cs-val" style="color:${b.color}">${b.cols}</div>
+          <div class="cs-lbl">عمود</div>
+        </div>
+        <div class="cs-item">
+          <div class="cs-val" style="color:${b.color}">${b.rows.toLocaleString('ar')}</div>
+          <div class="cs-lbl">صف</div>
+        </div>
+      </div>
+
+      <div class="last-access">${b.lastAccess}</div>
+
+      ${hasAccess ? `
+      <button class="card-enter" style="border-color:${b.color};color:${b.color}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
+        دخول المحل
+      </button>` : ''}
+    </div>`;
+  }).join('');
+}
+
+/* ── ENTER BRANCH ── */
+function enterBranch(branchId, branchName) {
+  sessionStorage.setItem('gr_branch', branchId);
+
+  // Show loading overlay
+  const overlay = document.getElementById('loadingOverlay');
+  document.getElementById('loadingTitle').textContent  = branchName;
+  document.getElementById('loadingBranch').textContent = `جارٍ تحميل ${branchId}...`;
+  overlay.classList.add('show');
+
+  // Navigate after animation
+  setTimeout(() => {
+    window.location.href = 'app.html';
+  }, 1300);
+}
+
+function showNoAccess() {
+  // Brief visual shake — no toast needed, locked style speaks for itself
+  const cards = document.querySelectorAll('.branch-card.locked');
+  cards.forEach(c => {
+    c.style.animation = 'none';
+    c.offsetHeight;
+    c.style.animation = 'shake 0.35s ease';
+  });
+}
+
+/* ── LOGOUT ── */
+function doLogout() {
+  localStorage.removeItem('gr_session');
+  sessionStorage.clear();
+  window.location.href = 'index.html';
+}
+
+/* ── PARTICLES ── */
+function initParticles() {
+  const host   = document.getElementById('particles');
+  const colors = ['rgba(0,212,255,0.6)','rgba(0,112,255,0.5)','rgba(139,92,246,0.5)','rgba(16,185,129,0.4)'];
+  for (let i = 0; i < 22; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const sz = Math.random() * 2.5 + 0.5;
+    p.style.cssText = `
+      width:${sz}px;height:${sz}px;
+      left:${Math.random()*100}%;
+      background:${colors[i%4]};
+      animation-duration:${Math.random()*18+12}s;
+      animation-delay:${Math.random()*-20}s;
+    `;
+    host.appendChild(p);
+  }
+}
+</script>
+<style>
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+</style>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="js/firebase-sync.js"></script>
+<script src="js/firebase-init.js"></script>
+</body>
+</html>
