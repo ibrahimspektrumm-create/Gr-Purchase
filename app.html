@@ -1,0 +1,3890 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GR Purchase — JARVIS OMEGA X</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;900&family=IBM+Plex+Mono:wght@400;500;600&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   JARVIS OMEGA X — DESIGN TOKENS
+═══════════════════════════════════════════════════════════════ */
+:root {
+  /* Core palette */
+  --void:        #020408;
+  --deep:        #050B14;
+  --surface:     #080F1C;
+  --raised:      #0B1525;
+  --card:        #0E1B2E;
+  --elevated:    #121F35;
+  --highlight:   #16263E;
+
+  /* Borders */
+  --border-dim:  #0D2040;
+  --border:      #133058;
+  --border-mid:  #1A4070;
+  --border-hi:   #1E5090;
+
+  /* Cyan — primary energy */
+  --cyan:        #00D4FF;
+  --cyan-hi:     #33DEFF;
+  --cyan-lo:     #0099CC;
+  --cyan-glow:   rgba(0,212,255,0.18);
+  --cyan-glow-sm:rgba(0,212,255,0.08);
+  --cyan-glass:  rgba(0,212,255,0.05);
+
+  /* Blue — secondary */
+  --blue:        #0070FF;
+  --blue-glow:   rgba(0,112,255,0.2);
+
+  /* Purple — accent */
+  --purple:      #8B5CF6;
+  --purple-glow: rgba(139,92,246,0.2);
+
+  /* Amber — warning / manual */
+  --amber:       #F59E0B;
+  --amber-glow:  rgba(245,158,11,0.15);
+
+  /* Green / Red */
+  --green:       #10B981;
+  --green-glow:  rgba(16,185,129,0.15);
+  --red:         #EF4444;
+  --red-glow:    rgba(239,68,68,0.15);
+
+  /* Text */
+  --tx-hi:       #E8F4FF;
+  --tx-mid:      #6B8EB5;
+  --tx-lo:       #2A4060;
+  --tx-dim:      #162030;
+
+  /* Fonts */
+  --f-ui:        'Cairo', sans-serif;
+  --f-mono:      'IBM Plex Mono', monospace;
+  --f-display:   'Orbitron', sans-serif;
+
+  /* Grid */
+  --row-h:       34px;
+  --col-w:       130px;
+  --row-hdr-w:   52px;
+  --col-hdr-h:   38px;
+  --sidebar-w:   64px;
+  --toolbar-h:   52px;
+  --tabbar-h:    44px;
+  --statusbar-h: 28px;
+
+  /* Radius */
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 16px;
+  --r-xl: 22px;
+
+  /* Transitions */
+  --t-fast:   0.12s cubic-bezier(0.4,0,0.2,1);
+  --t-mid:    0.22s cubic-bezier(0.4,0,0.2,1);
+  --t-slow:   0.4s  cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESET
+═══════════════════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden}
+body{
+  font-family:var(--f-ui);
+  background:var(--void);
+  color:var(--tx-hi);
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+button{font-family:var(--f-ui);cursor:pointer;border:none;background:none}
+input,select,textarea{font-family:var(--f-ui);outline:none;border:none;background:none;color:inherit}
+a{color:inherit;text-decoration:none}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--deep)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--border-hi)}
+
+/* ═══════════════════════════════════════════════════════════════
+   ANIMATED BACKGROUND
+═══════════════════════════════════════════════════════════════ */
+.bg-system{
+  position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;
+}
+.bg-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(0,212,255,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,212,255,0.03) 1px,transparent 1px);
+  background-size:48px 48px;
+  animation:gridDrift 60s linear infinite;
+}
+@keyframes gridDrift{
+  0%  {background-position:0 0}
+  100%{background-position:48px 48px}
+}
+.bg-radial{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 30%, rgba(0,112,255,0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 35% at 80% 70%, rgba(139,92,246,0.05) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 30% at 50% 10%, rgba(0,212,255,0.04) 0%, transparent 70%);
+}
+.bg-scanline{
+  position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    0deg,transparent,transparent 3px,rgba(0,212,255,0.008) 3px,rgba(0,212,255,0.008) 4px
+  );
+}
+.bg-particle{
+  position:absolute;border-radius:50%;animation:floatParticle linear infinite;
+}
+@keyframes floatParticle{
+  0%  {transform:translateY(100vh) scale(0);opacity:0}
+  10% {opacity:1}
+  90% {opacity:0.4}
+  100%{transform:translateY(-10vh) scale(1);opacity:0}
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   APP SHELL
+═══════════════════════════════════════════════════════════════ */
+.app-shell{
+  position:relative;z-index:1;
+  display:grid;
+  grid-template-columns:var(--sidebar-w) 1fr;
+  grid-template-rows:1fr;
+  height:100vh;
+  width:100vw;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════════════════════════════ */
+.sidebar{
+  grid-column:1;
+  display:flex;flex-direction:column;align-items:center;
+  background:rgba(8,15,28,0.95);
+  border-left:1px solid var(--border-dim);
+  backdrop-filter:blur(20px);
+  padding:12px 0 16px;
+  gap:4px;
+  position:relative;z-index:50;
+}
+.sidebar::before{
+  content:'';position:absolute;top:0;right:-1px;bottom:0;width:1px;
+  background:linear-gradient(180deg,transparent,var(--cyan-lo),var(--purple),transparent);
+  opacity:0.4;
+}
+
+.sidebar-logo{
+  width:40px;height:40px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:8px;
+  position:relative;
+}
+.sidebar-logo svg{
+  width:28px;height:28px;
+  filter:drop-shadow(0 0 8px var(--cyan));
+}
+.sidebar-logo::after{
+  content:'';position:absolute;inset:-4px;
+  border-radius:50%;
+  border:1px solid var(--cyan-lo);
+  opacity:0.3;
+  animation:logoPulse 3s ease-in-out infinite;
+}
+@keyframes logoPulse{0%,100%{transform:scale(1);opacity:0.3}50%{transform:scale(1.1);opacity:0.6}}
+
+.sidebar-divider{
+  width:32px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--border-mid),transparent);
+  margin:6px 0;
+}
+
+.nav-btn{
+  width:44px;height:44px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  border-radius:var(--r-md);
+  color:var(--tx-lo);
+  transition:var(--t-mid);
+  position:relative;
+  cursor:pointer;
+}
+.nav-btn svg{width:18px;height:18px;transition:var(--t-mid)}
+.nav-btn .nav-label{
+  font-size:8px;font-family:var(--f-mono);letter-spacing:0.05em;
+  transition:var(--t-mid);color:inherit;
+}
+.nav-btn:hover{color:var(--cyan);background:var(--cyan-glass)}
+.nav-btn:hover svg{filter:drop-shadow(0 0 6px var(--cyan))}
+.nav-btn.active{
+  color:var(--cyan);
+  background:linear-gradient(135deg,rgba(0,212,255,0.12),rgba(0,112,255,0.08));
+  border:1px solid rgba(0,212,255,0.2);
+  box-shadow:0 0 20px rgba(0,212,255,0.08),inset 0 0 12px rgba(0,212,255,0.05);
+}
+.nav-btn.active svg{filter:drop-shadow(0 0 8px var(--cyan))}
+.nav-btn.active::before{
+  content:'';position:absolute;right:-1px;top:25%;bottom:25%;
+  width:2px;background:var(--cyan);border-radius:2px;
+  box-shadow:0 0 8px var(--cyan);
+}
+
+.nav-spacer{flex:1}
+
+.branch-btn{
+  width:44px;height:44px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  border-radius:var(--r-md);
+  background:linear-gradient(135deg,rgba(139,92,246,0.12),rgba(0,112,255,0.08));
+  border:1px solid rgba(139,92,246,0.25);
+  color:var(--purple);
+  cursor:pointer;
+  transition:var(--t-mid);
+  position:relative;
+}
+.branch-btn:hover{
+  background:linear-gradient(135deg,rgba(139,92,246,0.2),rgba(0,112,255,0.15));
+  box-shadow:0 0 20px rgba(139,92,246,0.2);
+}
+.branch-id{
+  font-size:11px;font-family:var(--f-mono);font-weight:600;color:var(--purple);
+  line-height:1;
+}
+.branch-dot{
+  width:5px;height:5px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 6px var(--green);
+  animation:blink 2s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* ═══════════════════════════════════════════════════════════════
+   MAIN AREA
+═══════════════════════════════════════════════════════════════ */
+.main-area{
+  grid-column:2;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  position:relative;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TOPBAR
+═══════════════════════════════════════════════════════════════ */
+.topbar{
+  height:var(--toolbar-h);
+  display:flex;align-items:center;gap:6px;
+  padding:0 16px;
+  background:rgba(8,15,28,0.9);
+  border-bottom:1px solid var(--border-dim);
+  backdrop-filter:blur(20px);
+  flex-shrink:0;
+  position:relative;z-index:40;
+}
+.topbar::after{
+  content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent 5%,var(--cyan-lo) 30%,var(--cyan) 50%,var(--cyan-lo) 70%,transparent 95%);
+  opacity:0.3;
+}
+
+.tb-title{
+  font-family:var(--f-display);font-size:13px;font-weight:700;
+  color:var(--cyan);letter-spacing:0.15em;
+  text-shadow:0 0 12px rgba(0,212,255,0.5);
+  white-space:nowrap;margin-left:8px;
+}
+.tb-sheet-name{
+  font-size:11px;font-family:var(--f-mono);color:var(--tx-mid);
+  margin-left:4px;
+}
+
+.tb-sep{width:1px;height:24px;background:var(--border-dim);margin:0 4px;flex-shrink:0}
+.tb-spacer{flex:1}
+
+/* Toolbar buttons */
+.tb-btn{
+  height:34px;
+  display:flex;align-items:center;gap:6px;
+  padding:0 12px;
+  border-radius:var(--r-sm);
+  font-size:12px;font-weight:500;
+  color:var(--tx-mid);
+  background:transparent;
+  border:1px solid transparent;
+  transition:var(--t-fast);
+  white-space:nowrap;flex-shrink:0;
+}
+.tb-btn svg{width:14px;height:14px;flex-shrink:0}
+.tb-btn:hover{
+  color:var(--tx-hi);
+  background:var(--raised);
+  border-color:var(--border);
+}
+.tb-btn.primary{
+  color:#000;
+  background:linear-gradient(135deg,var(--cyan),var(--blue));
+  border-color:transparent;
+  font-weight:600;
+  box-shadow:0 0 16px rgba(0,212,255,0.25);
+}
+.tb-btn.primary:hover{box-shadow:0 0 24px rgba(0,212,255,0.4)}
+.tb-btn.danger{color:var(--red)}
+.tb-btn.danger:hover{background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.3)}
+.tb-btn.warn{color:var(--amber)}
+.tb-btn.warn:hover{background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.3)}
+
+/* Draft indicator */
+.draft-indicator{
+  display:flex;align-items:center;gap:5px;
+  font-size:11px;font-family:var(--f-mono);color:var(--amber);
+  opacity:0;transition:var(--t-mid);
+}
+.draft-indicator.visible{opacity:1}
+.draft-dot{
+  width:6px;height:6px;border-radius:50%;background:var(--amber);
+  box-shadow:0 0 6px var(--amber);animation:blink 1s ease-in-out infinite;
+}
+.undo-indicator{
+  display:flex;align-items:center;gap:5px;
+  font-size:11px;font-family:var(--f-mono);color:var(--tx-lo);
+  opacity:0;transition:var(--t-mid);
+}
+.undo-indicator.visible{opacity:1}
+
+/* Formula bar */
+.formula-bar{
+  height:36px;
+  display:flex;align-items:center;gap:8px;
+  padding:0 16px;
+  background:rgba(6,12,22,0.95);
+  border-bottom:1px solid var(--border-dim);
+  flex-shrink:0;
+}
+.formula-cell-ref{
+  font-family:var(--f-mono);font-size:12px;
+  color:var(--cyan);
+  min-width:60px;padding:4px 8px;
+  background:rgba(0,212,255,0.05);
+  border:1px solid rgba(0,212,255,0.15);
+  border-radius:var(--r-sm);
+  text-align:center;
+}
+.formula-sep{width:1px;height:20px;background:var(--border-dim)}
+.formula-icon{color:var(--purple);font-size:14px;font-family:var(--f-mono)}
+.formula-input-wrap{flex:1;position:relative}
+.formula-input{
+  width:100%;height:28px;
+  background:transparent;
+  font-size:13px;font-family:var(--f-mono);
+  color:var(--tx-hi);
+  caret-color:var(--cyan);
+  direction:ltr;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TAB BAR
+═══════════════════════════════════════════════════════════════ */
+.tabbar{
+  height:var(--tabbar-h);
+  display:flex;align-items:flex-end;
+  padding:0 16px;
+  background:rgba(5,11,20,0.95);
+  border-bottom:1px solid var(--border-dim);
+  flex-shrink:0;
+  gap:4px;
+}
+.sheet-tab{
+  height:36px;
+  display:flex;align-items:center;gap:7px;
+  padding:0 16px;
+  border-radius:var(--r-md) var(--r-md) 0 0;
+  font-size:12px;font-weight:500;
+  color:var(--tx-mid);
+  background:transparent;
+  border:1px solid transparent;
+  border-bottom:none;
+  cursor:pointer;
+  transition:var(--t-mid);
+  white-space:nowrap;
+  position:relative;bottom:-1px;
+}
+.sheet-tab .tab-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--tx-dim);transition:var(--t-mid);
+}
+.sheet-tab:hover{
+  color:var(--tx-hi);
+  background:var(--raised);
+  border-color:var(--border-dim);
+}
+.sheet-tab.active{
+  color:var(--cyan);
+  background:var(--surface);
+  border-color:var(--border);
+  border-bottom:1px solid var(--surface);
+}
+.sheet-tab.active .tab-dot{
+  background:var(--cyan);
+  box-shadow:0 0 8px var(--cyan);
+}
+.sheet-tab.purchases.active .tab-dot{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+.sheet-tab.kasa.active .tab-dot    {background:var(--green);box-shadow:0 0 8px var(--green)}
+.sheet-tab.barcode.active .tab-dot {background:var(--purple);box-shadow:0 0 8px var(--purple)}
+.sheet-tab.phinex.active .tab-dot  {background:var(--amber);box-shadow:0 0 8px var(--amber)}
+
+/* ═══════════════════════════════════════════════════════════════
+   SHEET CONTAINER
+═══════════════════════════════════════════════════════════════ */
+.sheet-container{
+  flex:1;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  position:relative;
+}
+
+/* ── Virtual Grid ── */
+.grid-wrap{
+  flex:1;
+  position:relative;
+  overflow:hidden;
+  background:var(--surface);
+}
+.grid-scroll{
+  position:absolute;inset:0;
+  overflow:scroll;
+  will-change:scroll-position;
+}
+/* Hide scrollbars on inner scroll, use custom ones */
+.grid-scroll::-webkit-scrollbar{display:none}
+.grid-spacer{
+  position:absolute;top:0;left:0;
+  pointer-events:none;
+}
+
+/* Column header */
+.col-header{
+  position:sticky;top:0;left:0;
+  height:var(--col-hdr-h);
+  background:rgba(8,13,24,0.97);
+  border-bottom:1px solid var(--border-mid);
+  display:flex;align-items:stretch;
+  z-index:20;
+  backdrop-filter:blur(8px);
+}
+.col-header::after{
+  content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan-lo),transparent);
+  opacity:0.4;
+}
+.ch-corner{
+  width:var(--row-hdr-w);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  border-left:1px solid var(--border);
+  border-bottom:1px solid var(--border-mid);
+  background:rgba(0,212,255,0.03);
+  position:sticky;right:0;z-index:21;
+  cursor:pointer;
+}
+.ch-corner:hover{background:rgba(0,212,255,0.06)}
+.ch-corner svg{width:14px;height:14px;color:var(--tx-lo)}
+
+.ch-cell{
+  display:flex;align-items:center;justify-content:center;gap:4px;
+  border-left:1px solid var(--border-dim);
+  font-size:11px;font-family:var(--f-mono);
+  color:var(--tx-mid);
+  user-select:none;cursor:pointer;
+  position:relative;flex-shrink:0;
+  transition:background var(--t-fast);
+}
+.ch-cell:hover{background:rgba(0,212,255,0.04);color:var(--tx-hi)}
+.ch-cell.frozen{
+  background:rgba(0,212,255,0.03);
+  color:var(--cyan-lo);
+  border-left-color:rgba(0,212,255,0.2);
+}
+.ch-cell.selected{background:rgba(0,212,255,0.08);color:var(--cyan)}
+.ch-letter{font-size:9px;color:var(--tx-dim);font-family:var(--f-mono)}
+.ch-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:calc(100% - 20px)}
+
+/* Row header */
+.row-header{
+  position:absolute;top:var(--col-hdr-h);right:0;
+  width:var(--row-hdr-w);
+  overflow:hidden;z-index:19;
+}
+.rh-cell{
+  position:absolute;right:0;
+  width:var(--row-hdr-w);
+  display:flex;align-items:center;justify-content:center;
+  border-left:1px solid var(--border);
+  border-bottom:1px solid var(--border-dim);
+  font-size:11px;font-family:var(--f-mono);
+  color:var(--tx-dim);
+  background:rgba(8,13,24,0.95);
+  cursor:row-resize;user-select:none;
+}
+.rh-cell:hover{background:rgba(0,212,255,0.04);color:var(--tx-mid)}
+.rh-cell.selected{background:rgba(0,212,255,0.06);color:var(--cyan-lo)}
+
+/* Cell viewport */
+.cell-viewport{
+  position:absolute;
+  top:var(--col-hdr-h);right:var(--row-hdr-w);
+  overflow:hidden;z-index:1;
+}
+
+/* Data rows */
+.data-row{
+  position:absolute;left:0;
+  display:flex;align-items:stretch;
+}
+.data-row.invoice-boundary{
+  border-top:2px solid rgba(0,212,255,0.4);
+  box-shadow:0 -3px 12px rgba(0,212,255,0.12),0 2px 12px rgba(0,212,255,0.06);
+}
+
+/* Data cells */
+.data-cell{
+  position:absolute;
+  display:flex;align-items:center;
+  padding:0 10px;
+  border-left:1px solid var(--border-dim);
+  border-bottom:1px solid var(--border-dim);
+  font-size:13px;
+  color:var(--tx-hi);
+  overflow:hidden;white-space:nowrap;
+  cursor:cell;flex-shrink:0;
+  transition:background var(--t-fast);
+  direction:rtl;
+}
+.data-cell:hover{background:rgba(0,212,255,0.035)}
+.data-cell.manual-override{border-right:2px solid rgba(245,158,11,0.6)}
+.data-cell.has-link{color:#38BDF8;text-decoration:underline;text-decoration-color:rgba(56,189,248,0.4)}
+.data-cell.has-error{
+  background:rgba(239,68,68,0.06);
+  box-shadow:inset 0 0 0 1px rgba(239,68,68,0.3);
+}
+.data-cell.selected-range{background:rgba(0,212,255,0.07)}
+.data-cell.num{justify-content:flex-end;font-family:var(--f-mono);font-size:12px}
+.data-cell.date{font-family:var(--f-mono);font-size:12px}
+
+/* Cell selection */
+.cell-selection{
+  position:absolute;pointer-events:none;z-index:8;
+  border:2px solid var(--cyan);
+  border-radius:2px;
+  box-shadow:0 0 0 1px rgba(0,212,255,0.3),0 0 16px rgba(0,212,255,0.15);
+  display:none;
+  transition:top 0.05s,left 0.05s,width 0.05s,height 0.05s;
+}
+.cell-selection.range{
+  background:rgba(0,212,255,0.05);
+}
+.cell-selection.active{display:block}
+
+/* Custom scrollbars */
+.h-scrollbar{
+  position:absolute;bottom:0;right:var(--row-hdr-w);left:0;
+  height:10px;background:var(--deep);z-index:15;
+  border-top:1px solid var(--border-dim);
+}
+.v-scrollbar{
+  position:absolute;top:var(--col-hdr-h);left:0;bottom:10px;
+  width:10px;background:var(--deep);z-index:15;
+  border-right:1px solid var(--border-dim);
+}
+.scroll-thumb{
+  position:absolute;border-radius:5px;
+  background:var(--border-mid);
+  cursor:pointer;transition:background var(--t-fast);
+}
+.scroll-thumb:hover{background:var(--border-hi)}
+
+/* ═══════════════════════════════════════════════════════════════
+   STATUS BAR
+═══════════════════════════════════════════════════════════════ */
+.statusbar{
+  height:var(--statusbar-h);
+  display:flex;align-items:center;gap:16px;
+  padding:0 16px;
+  background:rgba(5,11,20,0.97);
+  border-top:1px solid var(--border-dim);
+  flex-shrink:0;
+  font-size:11px;font-family:var(--f-mono);
+  color:var(--tx-lo);
+}
+.sb-item{display:flex;align-items:center;gap:5px}
+.sb-val{color:var(--cyan);font-weight:500}
+.sb-spacer{flex:1}
+.sb-status{
+  display:flex;align-items:center;gap:5px;
+  font-size:10px;color:var(--green);
+}
+.sb-status-dot{
+  width:5px;height:5px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 4px var(--green);animation:blink 3s ease-in-out infinite;
+}
+.selection-summary{
+  background:rgba(0,212,255,0.06);
+  padding:2px 10px;border-radius:4px;
+  color:var(--tx-mid);border:1px solid rgba(0,212,255,0.1);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CELL EDITOR (inline)
+═══════════════════════════════════════════════════════════════ */
+.cell-editor{
+  position:absolute;z-index:30;
+  display:none;
+  background:var(--surface);
+  border:2px solid var(--cyan);
+  box-shadow:0 0 20px rgba(0,212,255,0.25);
+  border-radius:2px;
+}
+.cell-editor.active{display:block}
+.cell-editor input{
+  width:100%;height:100%;
+  padding:0 10px;
+  font-size:13px;font-family:var(--f-ui);
+  color:var(--tx-hi);
+  caret-color:var(--cyan);
+  background:transparent;
+  direction:rtl;
+}
+
+/* Dropdown autocomplete */
+.cell-dropdown{
+  position:absolute;z-index:50;
+  background:var(--card);
+  border:1px solid var(--border-mid);
+  border-top:none;
+  border-radius:0 0 var(--r-md) var(--r-md);
+  box-shadow:0 12px 40px rgba(0,0,0,0.6),0 0 20px rgba(0,212,255,0.08);
+  max-height:200px;overflow-y:auto;
+  display:none;min-width:160px;
+}
+.cell-dropdown.open{display:block}
+.cd-item{
+  padding:8px 14px;font-size:12px;cursor:pointer;
+  transition:background var(--t-fast);white-space:nowrap;
+}
+.cd-item:hover,.cd-item.focused{background:rgba(0,212,255,0.08);color:var(--cyan)}
+
+/* ═══════════════════════════════════════════════════════════════
+   MODALS — Holographic Command Windows
+═══════════════════════════════════════════════════════════════ */
+.modal-overlay{
+  position:fixed;inset:0;z-index:900;
+  background:rgba(2,4,8,0.85);
+  backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity var(--t-mid);
+}
+.modal-overlay.open{opacity:1;pointer-events:auto}
+
+.modal-win{
+  background:linear-gradient(160deg,rgba(14,27,46,0.98),rgba(8,15,28,0.99));
+  border:1px solid var(--border-mid);
+  border-radius:var(--r-xl);
+  padding:28px;
+  min-width:480px;max-width:680px;width:90%;
+  position:relative;
+  box-shadow:
+    0 0 0 1px rgba(0,212,255,0.1),
+    0 2px 60px rgba(0,0,0,0.8),
+    0 0 80px rgba(0,212,255,0.05);
+  transform:scale(0.96) translateY(8px);
+  transition:transform var(--t-mid);
+}
+.modal-overlay.open .modal-win{transform:scale(1) translateY(0)}
+.modal-win::before{
+  content:'';position:absolute;inset:-1px;border-radius:var(--r-xl);
+  background:linear-gradient(135deg,rgba(0,212,255,0.12) 0%,transparent 50%,rgba(139,92,246,0.08) 100%);
+  pointer-events:none;
+}
+
+.modal-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:24px;
+  padding-bottom:16px;
+  border-bottom:1px solid var(--border-dim);
+}
+.modal-title{
+  font-family:var(--f-display);font-size:14px;font-weight:700;
+  color:var(--cyan);letter-spacing:0.1em;
+  text-shadow:0 0 12px rgba(0,212,255,0.4);
+  display:flex;align-items:center;gap:10px;
+}
+.modal-title-icon{
+  width:32px;height:32px;
+  background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(0,112,255,0.1));
+  border:1px solid rgba(0,212,255,0.25);
+  border-radius:var(--r-sm);
+  display:flex;align-items:center;justify-content:center;
+}
+.modal-title-icon svg{width:16px;height:16px;color:var(--cyan)}
+.modal-close{
+  width:32px;height:32px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:var(--r-sm);
+  color:var(--tx-mid);
+  transition:var(--t-fast);cursor:pointer;
+}
+.modal-close:hover{background:rgba(239,68,68,0.12);color:var(--red)}
+
+/* Form fields */
+.field-group{margin-bottom:18px}
+.field-label{
+  font-size:11px;font-weight:600;
+  color:var(--tx-mid);text-transform:uppercase;letter-spacing:0.08em;
+  margin-bottom:7px;display:flex;align-items:center;gap:6px;
+}
+.field-label .fl-badge{
+  font-size:9px;padding:1px 5px;
+  background:rgba(0,212,255,0.08);
+  border:1px solid rgba(0,212,255,0.15);
+  border-radius:3px;color:var(--cyan-lo);
+}
+.field-input{
+  width:100%;height:40px;padding:0 14px;
+  background:rgba(0,212,255,0.03);
+  border:1px solid var(--border);
+  border-radius:var(--r-md);
+  color:var(--tx-hi);font-size:13px;
+  transition:var(--t-fast);
+}
+.field-input:focus{
+  border-color:rgba(0,212,255,0.4);
+  background:rgba(0,212,255,0.05);
+  box-shadow:0 0 0 3px rgba(0,212,255,0.08);
+}
+.field-select{
+  width:100%;height:40px;padding:0 14px;
+  background:rgba(0,212,255,0.03);
+  border:1px solid var(--border);
+  border-radius:var(--r-md);
+  color:var(--tx-hi);font-size:13px;
+  cursor:pointer;
+  appearance:none;
+}
+.field-select option{background:var(--card)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+
+/* Radio toggle */
+.radio-group{display:flex;gap:8px;flex-wrap:wrap}
+.radio-opt{
+  display:flex;align-items:center;gap:6px;
+  padding:6px 14px;
+  border:1px solid var(--border);
+  border-radius:var(--r-md);
+  cursor:pointer;font-size:12px;color:var(--tx-mid);
+  transition:var(--t-fast);
+  background:transparent;
+}
+.radio-opt input{display:none}
+.radio-opt:hover{border-color:var(--border-mid);color:var(--tx-hi)}
+.radio-opt.selected{
+  border-color:rgba(0,212,255,0.4);
+  background:rgba(0,212,255,0.07);
+  color:var(--cyan);
+}
+
+/* Modal footer */
+.modal-footer{
+  display:flex;gap:10px;justify-content:flex-start;
+  margin-top:24px;padding-top:16px;
+  border-top:1px solid var(--border-dim);
+}
+.modal-btn{
+  height:38px;padding:0 20px;
+  border-radius:var(--r-md);
+  font-size:13px;font-weight:600;
+  display:flex;align-items:center;gap:7px;
+  transition:var(--t-mid);cursor:pointer;
+}
+.modal-btn.primary{
+  background:linear-gradient(135deg,var(--cyan),var(--blue));
+  color:#000;
+  box-shadow:0 0 20px rgba(0,212,255,0.25);
+}
+.modal-btn.primary:hover{box-shadow:0 0 30px rgba(0,212,255,0.4);transform:translateY(-1px)}
+.modal-btn.ghost{
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--tx-mid);
+}
+.modal-btn.ghost:hover{border-color:var(--border-mid);color:var(--tx-hi)}
+.modal-btn.danger-ghost{
+  background:transparent;border:1px solid rgba(239,68,68,0.3);color:var(--red);
+}
+.modal-btn.danger-ghost:hover{background:rgba(239,68,68,0.08)}
+
+/* Dep warning */
+.dep-warning{
+  background:rgba(245,158,11,0.06);
+  border:1px solid rgba(245,158,11,0.25);
+  border-radius:var(--r-md);
+  padding:12px 14px;
+  margin-bottom:16px;
+  font-size:12px;color:var(--amber);
+  display:none;
+}
+.dep-warning.visible{display:block}
+.dep-warning strong{display:block;margin-bottom:6px}
+
+/* ═══════════════════════════════════════════════════════════════
+   FIND & REPLACE MODAL (compact floating)
+═══════════════════════════════════════════════════════════════ */
+.find-panel{
+  position:fixed;top:80px;left:50%;transform:translateX(-50%);
+  z-index:800;
+  background:linear-gradient(160deg,rgba(14,27,46,0.99),rgba(8,15,28,0.99));
+  border:1px solid var(--border-mid);
+  border-radius:var(--r-lg);
+  padding:20px 22px;
+  min-width:440px;
+  box-shadow:0 0 0 1px rgba(0,212,255,0.1),0 20px 60px rgba(0,0,0,0.7);
+  display:none;
+}
+.find-panel.open{display:block;animation:slideDown 0.2s ease}
+@keyframes slideDown{from{opacity:0;transform:translateX(-50%) translateY(-10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.find-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.find-input{
+  flex:1;height:34px;padding:0 12px;
+  background:rgba(0,212,255,0.04);
+  border:1px solid var(--border);border-radius:var(--r-sm);
+  color:var(--tx-hi);font-size:13px;font-family:var(--f-mono);
+  direction:rtl;
+}
+.find-input:focus{border-color:rgba(0,212,255,0.35);box-shadow:0 0 0 2px rgba(0,212,255,0.07)}
+.find-count{
+  font-size:11px;font-family:var(--f-mono);color:var(--tx-mid);
+  white-space:nowrap;min-width:60px;text-align:center;
+}
+.find-opts{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.find-opt-btn{
+  height:26px;padding:0 10px;
+  border-radius:4px;font-size:11px;
+  border:1px solid var(--border);color:var(--tx-mid);
+  transition:var(--t-fast);
+}
+.find-opt-btn:hover{border-color:var(--border-mid);color:var(--tx-hi)}
+.find-opt-btn.on{border-color:rgba(0,212,255,0.35);color:var(--cyan);background:rgba(0,212,255,0.07)}
+
+/* ═══════════════════════════════════════════════════════════════
+   TOAST / NOTIFICATION
+═══════════════════════════════════════════════════════════════ */
+.toast-host{
+  position:fixed;bottom:40px;left:50%;transform:translateX(-50%);
+  z-index:9999;display:flex;flex-direction:column;align-items:center;gap:8px;
+  pointer-events:none;
+}
+.toast{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 20px;
+  background:var(--elevated);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  font-size:13px;box-shadow:0 8px 40px rgba(0,0,0,0.6);
+  animation:toastIn 0.25s ease;max-width:360px;
+  pointer-events:auto;
+}
+.toast.success{border-color:rgba(16,185,129,0.4)}
+.toast.error  {border-color:rgba(239,68,68,0.4)}
+.toast.info   {border-color:rgba(0,212,255,0.3)}
+.toast.warn   {border-color:rgba(245,158,11,0.4)}
+@keyframes toastIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══════════════════════════════════════════════════════════════
+   HOLOGRAPHIC WARNING
+═══════════════════════════════════════════════════════════════ */
+.holo-warning{
+  position:fixed;top:80px;left:50%;transform:translateX(-50%);
+  z-index:800;
+  background:rgba(239,68,68,0.08);
+  border:1px solid rgba(239,68,68,0.4);
+  border-radius:var(--r-lg);
+  padding:12px 20px;
+  font-size:13px;color:var(--red);
+  box-shadow:0 0 30px rgba(239,68,68,0.15);
+  display:none;animation:toastIn 0.2s ease;
+}
+.holo-warning.show{display:flex;align-items:center;gap:8px}
+
+/* ═══════════════════════════════════════════════════════════════
+   BRANCH SWITCHER PANEL
+═══════════════════════════════════════════════════════════════ */
+.branch-panel{
+  position:fixed;bottom:80px;right:calc(var(--sidebar-w) + 8px);
+  z-index:200;
+  background:linear-gradient(160deg,rgba(14,27,46,0.99),rgba(8,15,28,0.99));
+  border:1px solid var(--border-mid);
+  border-radius:var(--r-lg);
+  padding:16px;min-width:200px;
+  box-shadow:0 0 0 1px rgba(139,92,246,0.1),0 20px 60px rgba(0,0,0,0.7);
+  display:none;
+}
+.branch-panel.open{display:block;animation:slideUp 0.2s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.bp-title{
+  font-size:10px;font-family:var(--f-mono);color:var(--tx-mid);
+  text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;
+}
+.bp-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-radius:var(--r-md);
+  cursor:pointer;transition:var(--t-fast);
+  border:1px solid transparent;
+}
+.bp-item:hover{background:rgba(139,92,246,0.08);border-color:rgba(139,92,246,0.2)}
+.bp-item.active{background:rgba(139,92,246,0.12);border-color:rgba(139,92,246,0.3)}
+.bp-dot{width:8px;height:8px;border-radius:50%;background:var(--purple);box-shadow:0 0 6px var(--purple)}
+.bp-item.active .bp-dot{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+.bp-name{font-size:13px;font-weight:500;flex:1}
+.bp-badge{font-size:10px;font-family:var(--f-mono);color:var(--tx-mid)}
+
+/* ═══════════════════════════════════════════════════════════════
+   COLUMN SETTINGS PANEL
+═══════════════════════════════════════════════════════════════ */
+.formula-preview{
+  background:rgba(0,0,0,0.3);
+  border:1px solid var(--border);
+  border-radius:var(--r-sm);
+  padding:10px 14px;
+  font-family:var(--f-mono);font-size:12px;
+  color:var(--cyan-lo);direction:ltr;
+  min-height:40px;margin-top:8px;
+}
+.formula-builder{
+  background:rgba(0,212,255,0.03);
+  border:1px solid var(--border);
+  border-radius:var(--r-md);
+  padding:14px;margin-top:10px;
+}
+.fb-title{
+  font-size:11px;font-weight:600;color:var(--tx-mid);
+  text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;
+}
+.fb-col-picker{
+  display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;
+}
+.fb-col-chip{
+  padding:4px 10px;border-radius:4px;
+  background:rgba(0,112,255,0.1);
+  border:1px solid rgba(0,112,255,0.25);
+  font-size:11px;font-family:var(--f-mono);color:#60A5FA;
+  cursor:pointer;transition:var(--t-fast);
+}
+.fb-col-chip:hover{background:rgba(0,112,255,0.2)}
+.fb-expr-input{
+  width:100%;height:36px;padding:0 12px;
+  background:rgba(0,0,0,0.3);
+  border:1px solid var(--border);
+  border-radius:var(--r-sm);
+  font-family:var(--f-mono);font-size:12px;
+  color:var(--tx-hi);direction:ltr;
+}
+.fb-ops{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.fb-op{
+  padding:4px 10px;border-radius:4px;
+  background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.2);
+  font-family:var(--f-mono);font-size:12px;color:var(--purple);
+  cursor:pointer;transition:var(--t-fast);
+}
+.fb-op:hover{background:rgba(139,92,246,0.2)}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE MENU BUTTON (hidden on desktop)
+═══════════════════════════════════════════════════════════════ */
+.mobile-menu-btn{
+  display:none;
+  width:34px;height:34px;flex-shrink:0;
+  align-items:center;justify-content:center;
+  border-radius:var(--r-sm);
+  color:var(--tx-mid);
+  background:transparent;border:1px solid transparent;
+  transition:var(--t-fast);
+  margin-left:4px;
+}
+.mobile-menu-btn svg{width:18px;height:18px}
+.mobile-menu-btn:hover{color:var(--cyan);background:var(--cyan-glass)}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════════════════════ */
+@media(max-width:768px){
+  :root{--sidebar-w:0px}
+
+  /* Sidebar becomes an overlay drawer instead of disappearing entirely —
+     Settings/Log/Find remain reachable via the hamburger button. */
+  .sidebar{
+    position:fixed;
+    top:0;right:0;bottom:0;
+    z-index:200;
+    transform:translateX(100%);
+    transition:transform var(--t-slow);
+    box-shadow:-8px 0 40px rgba(0,0,0,0.5);
+  }
+  .sidebar.mobile-open{transform:translateX(0)}
+
+  .mobile-sidebar-backdrop{
+    display:none;
+    position:fixed;inset:0;z-index:199;
+    background:rgba(2,4,8,0.6);
+    backdrop-filter:blur(2px);
+  }
+  .mobile-sidebar-backdrop.show{display:block}
+
+  .mobile-menu-btn{display:flex}
+
+  /* Toolbar: scroll horizontally instead of clipping/overlapping buttons */
+  .topbar{
+    overflow-x:auto;
+    overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .topbar::-webkit-scrollbar{display:none}
+  .tb-title{display:none} /* save space on small screens, sheet name + menu icon are enough */
+
+  .find-panel{min-width:calc(100vw - 32px)}
+  .modal-win{min-width:calc(100vw - 32px);padding:20px}
+}
+
+@media(max-width:480px){
+  .tb-sheet-name{font-size:10px}
+  .sheet-tab{padding:0 10px;font-size:11px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── Animated Background ── -->
+<div class="bg-system" id="bgSystem">
+  <div class="bg-grid"></div>
+  <div class="bg-radial"></div>
+  <div class="bg-scanline"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     APP SHELL
+══════════════════════════════════════════════════════════ -->
+<div class="app-shell">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="4"  width="3" height="24" rx="1" fill="currentColor"/>
+        <rect x="8" y="4"  width="1.5" height="24" rx="0.5" fill="currentColor"/>
+        <rect x="11.5" y="4" width="3" height="24" rx="1" fill="currentColor"/>
+        <rect x="17" y="4" width="1" height="24" rx="0.5" fill="currentColor"/>
+        <rect x="20" y="4" width="2.5" height="24" rx="1" fill="currentColor"/>
+        <rect x="25" y="4" width="4" height="24" rx="1" fill="currentColor"/>
+      </svg>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <button class="nav-btn active" id="nav-purchases" onclick="switchPage('purchases')" title="Purchases">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        <path d="M9 12h6M9 16h4"/>
+      </svg>
+      <span class="nav-label">PURCH</span>
+    </button>
+
+    <button class="nav-btn" id="nav-kasa" onclick="switchPage('kasa')" title="Kasa">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <rect x="2" y="7" width="20" height="14" rx="2"/>
+        <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/>
+      </svg>
+      <span class="nav-label">KASA</span>
+    </button>
+
+    <button class="nav-btn" id="nav-barcode" onclick="switchPage('barcode')" title="Barcode">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <rect x="2" y="3" width="2.5" height="18" rx="0.5"/>
+        <rect x="6" y="3" width="1.2" height="18" rx="0.3"/>
+        <rect x="9" y="3" width="2" height="18" rx="0.5"/>
+        <rect x="13" y="3" width="1" height="18" rx="0.3"/>
+        <rect x="16" y="3" width="2" height="18" rx="0.5"/>
+        <rect x="20" y="3" width="2" height="18" rx="0.5"/>
+      </svg>
+      <span class="nav-label">BCODE</span>
+    </button>
+
+    <button class="nav-btn" id="nav-phinex" onclick="switchPage('phinex')" title="Phinex">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+      </svg>
+      <span class="nav-label">PHNEX</span>
+    </button>
+
+    <div class="sidebar-divider"></div>
+
+    <button class="nav-btn" onclick="toggleFindPanel(); closeMobileSidebar();" title="بحث واستبدال">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+      </svg>
+      <span class="nav-label">FIND</span>
+    </button>
+
+    <button class="nav-btn" onclick="switchPage('log')" title="سجل النشاط">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+        <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
+      </svg>
+      <span class="nav-label">LOG</span>
+    </button>
+
+    <button class="nav-btn" onclick="switchPage('settings')" title="الإعدادات">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+      </svg>
+      <span class="nav-label">SET</span>
+    </button>
+
+    <div class="nav-spacer"></div>
+
+    <button class="branch-btn" id="branchBtn" onclick="toggleBranchPanel()" title="تبديل المحل">
+      <span class="branch-id" id="branchLabel">B1</span>
+      <span class="branch-dot"></span>
+    </button>
+  </aside>
+
+  <!-- Mobile sidebar backdrop — closes the drawer when tapped -->
+  <div class="mobile-sidebar-backdrop" id="mobileSidebarBackdrop" onclick="closeMobileSidebar()"></div>
+
+  <!-- ── MAIN AREA ── -->
+  <main class="main-area">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileSidebar()" title="القائمة" aria-label="فتح القائمة">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <span class="tb-title">GR·PURCHASE</span>
+      <span class="tb-sheet-name" id="tbSheetName">// PURCHASES</span>
+      <div class="tb-sep"></div>
+
+      <!-- Toolbar Actions -->
+      <button class="tb-btn primary" onclick="openColumnSettings(null)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        عمود جديد
+      </button>
+
+      <button class="tb-btn" onclick="openColumnSettings(null)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        إعدادات العمود
+      </button>
+
+      <button class="tb-btn" onclick="openModal('validModal')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        التحقق
+      </button>
+
+      <button class="tb-btn" onclick="openModal('linkModal')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+        رابط
+      </button>
+
+      <button class="tb-btn" onclick="toggleFindPanel()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        بحث
+      </button>
+
+      <button class="tb-btn" onclick="toggleFreeze()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        تجميد
+      </button>
+
+      <div class="tb-sep"></div>
+
+      <button class="tb-btn" onclick="importExcel()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        استيراد
+      </button>
+
+      <button class="tb-btn" onclick="exportExcel()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        تصدير
+      </button>
+
+      <!-- Purchases-only: Close Invoice -->
+      <button class="tb-btn warn" id="closeInvoiceBtn" onclick="closeInvoice()" style="display:none">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12l2 2 4-4"/></svg>
+        إنهاء الفاتورة
+      </button>
+
+      <div class="tb-spacer"></div>
+
+      <!-- Draft indicator -->
+      <div class="draft-indicator" id="draftIndicator">
+        <span class="draft-dot"></span>
+        <span>مسودة غير محفوظة</span>
+      </div>
+
+      <!-- Undo indicator -->
+      <div class="undo-indicator" id="undoIndicator" title="Ctrl+Z للتراجع / Ctrl+Shift+Z للإعادة">
+        ↩ <span id="undoCount">0</span>
+      </div>
+
+      <button class="tb-btn primary" onclick="saveToFirestore()" title="Ctrl+S">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        حفظ
+      </button>
+    </div>
+
+    <!-- Formula Bar -->
+    <div class="formula-bar">
+      <div class="formula-cell-ref" id="cellRef">A1</div>
+      <div class="formula-sep"></div>
+      <span class="formula-icon">ƒ</span>
+      <div class="formula-input-wrap">
+        <input class="formula-input" id="formulaInput" placeholder="القيمة أو المعادلة..." spellcheck="false" dir="rtl">
+      </div>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="tabbar">
+      <button class="sheet-tab purchases active" id="tab-purchases" onclick="switchSheet('Purchases')">
+        <span class="tab-dot"></span> Purchases
+      </button>
+      <button class="sheet-tab kasa" id="tab-kasa" onclick="switchSheet('Kasa')">
+        <span class="tab-dot"></span> Kasa
+      </button>
+      <button class="sheet-tab barcode" id="tab-barcode" onclick="switchSheet('Barcode')">
+        <span class="tab-dot"></span> Barcode
+      </button>
+      <button class="sheet-tab phinex" id="tab-phinex" onclick="switchSheet('Phinex')">
+        <span class="tab-dot"></span> Phinex
+      </button>
+    </div>
+
+    <!-- Sheet Container -->
+    <div class="sheet-container" id="sheetContainer">
+      <div class="grid-wrap" id="gridWrap">
+
+        <!-- Scroll container -->
+        <div class="grid-scroll" id="gridScroll">
+          <div class="grid-spacer" id="gridSpacer"></div>
+        </div>
+
+        <!-- Column header (sticky) -->
+        <div class="col-header" id="colHeader">
+          <div class="ch-corner" onclick="selectAll()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Row header -->
+        <div class="row-header" id="rowHeader"></div>
+
+        <!-- Cell viewport -->
+        <div class="cell-viewport" id="cellViewport">
+          <!-- Cell selection overlay -->
+          <div class="cell-selection" id="cellSelection"></div>
+          <!-- Inline editor -->
+          <div class="cell-editor" id="cellEditor">
+            <input type="text" id="cellEditorInput" spellcheck="false">
+          </div>
+          <!-- Dropdown -->
+          <div class="cell-dropdown" id="cellDropdown"></div>
+        </div>
+
+        <!-- Custom scrollbars -->
+        <div class="h-scrollbar" id="hScrollbar">
+          <div class="scroll-thumb" id="hThumb"></div>
+        </div>
+        <div class="v-scrollbar" id="vScrollbar">
+          <div class="scroll-thumb" id="vThumb"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="statusbar">
+      <div class="sb-item">
+        <span>صف</span>
+        <span class="sb-val" id="sb-row">1</span>
+      </div>
+      <div class="sb-item">
+        <span>عمود</span>
+        <span class="sb-val" id="sb-col">A</span>
+      </div>
+      <div class="sb-item">
+        <span>الأعمدة</span>
+        <span class="sb-val" id="sb-colcount">0</span>
+      </div>
+      <div class="selection-summary" id="selectionSummary" style="display:none">
+        مجموع: <span id="sb-sum" class="sb-val">0</span> |
+        متوسط: <span id="sb-avg" class="sb-val">0</span> |
+        عدد: <span id="sb-count" class="sb-val">0</span>
+      </div>
+      <div class="sb-spacer"></div>
+      <div class="sb-item" id="sb-branch">
+        <span>المحل</span>
+        <span class="sb-val" id="sb-branch-name">—</span>
+      </div>
+      <div class="sb-item" id="sb-user">
+        <span>المستخدم</span>
+        <span class="sb-val" id="sb-user-name">—</span>
+      </div>
+      <div class="sb-status">
+        <span class="sb-status-dot"></span>
+        <span id="sb-status-text">جاهز</span>
+      </div>
+    </div>
+
+  </main>
+</div><!-- end app-shell -->
+
+<!-- ══════════════════════════════════════════════════════════
+     BRANCH SWITCHER
+══════════════════════════════════════════════════════════ -->
+<div class="branch-panel" id="branchPanel">
+  <div class="bp-title">// اختر المحل</div>
+  <div id="branchList"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     FIND & REPLACE PANEL
+══════════════════════════════════════════════════════════ -->
+<div class="find-panel" id="findPanel">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <span style="font-family:var(--f-display);font-size:12px;color:var(--cyan);letter-spacing:0.1em">FIND & REPLACE</span>
+    <button class="modal-close" onclick="toggleFindPanel()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="find-row">
+    <input class="find-input" id="findInput" placeholder="بحث عن..." oninput="onFindInput()">
+    <span class="find-count" id="findCount">—</span>
+    <button class="tb-btn" onclick="findPrev()" style="height:34px;padding:0 10px">‹</button>
+    <button class="tb-btn" onclick="findNext()" style="height:34px;padding:0 10px">›</button>
+  </div>
+  <div class="find-row">
+    <input class="find-input" id="replaceInput" placeholder="استبدال بـ...">
+    <button class="tb-btn" onclick="replaceCurrent()" style="height:34px;padding:0 12px;font-size:12px">استبدال</button>
+    <button class="tb-btn" onclick="replaceAll()" style="height:34px;padding:0 12px;font-size:12px">الكل</button>
+  </div>
+  <div class="find-opts">
+    <button class="find-opt-btn" id="opt-exact" onclick="toggleFindOpt('exact')">تطابق كامل</button>
+    <button class="find-opt-btn" id="opt-case"  onclick="toggleFindOpt('case')">Aa حساس</button>
+    <button class="find-opt-btn" id="opt-col"   onclick="toggleFindOpt('col')">العمود الحالي</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     COLUMN SETTINGS MODAL
+══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="colModal">
+  <div class="modal-win" style="max-width:580px">
+    <div class="modal-header">
+      <div class="modal-title">
+        <div class="modal-title-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        </div>
+        إعدادات العمود
+      </div>
+      <button class="modal-close" onclick="closeModal('colModal')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="dep-warning" id="colDepWarning">
+      <strong>⚠ تحذير — أعمدة مرتبطة ستتأثر:</strong>
+      <span id="colDepList"></span>
+    </div>
+
+    <div class="field-row">
+      <div class="field-group">
+        <div class="field-label">اسم العمود</div>
+        <input class="field-input" id="col-name" placeholder="مثال: اسم المنتج">
+      </div>
+      <div class="field-group">
+        <div class="field-label">نوع البيانات</div>
+        <select class="field-select" id="col-type" onchange="onColTypeChange()">
+          <option value="text">نص</option>
+          <option value="number">رقم</option>
+          <option value="currency">عملة</option>
+          <option value="date">تاريخ</option>
+          <option value="percentage">نسبة مئوية</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Format section -->
+    <div class="field-group" id="formatSection" style="display:none">
+      <div class="field-label">التنسيق <span class="fl-badge">FORMAT</span></div>
+      <div class="field-row-3">
+        <div>
+          <div class="field-label" style="font-size:10px">المنازل العشرية</div>
+          <input class="field-input" id="col-decimals" type="number" value="2" min="0" max="8" style="height:34px">
+        </div>
+        <div id="currencySection">
+          <div class="field-label" style="font-size:10px">العملة</div>
+          <select class="field-select" id="col-currency" style="height:34px">
+            <option value="EUR">EUR €</option>
+            <option value="USD">USD $</option>
+            <option value="GBP">GBP £</option>
+            <option value="SAR">SAR ﷼</option>
+          </select>
+        </div>
+        <div>
+          <div class="field-label" style="font-size:10px">فواصل الآلاف</div>
+          <select class="field-select" id="col-thousands" style="height:34px">
+            <option value="1">نعم</option>
+            <option value="0">لا</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formula section -->
+    <div class="field-group">
+      <div class="field-label">نوع الحساب التلقائي للعمود</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px" id="formulaTypeGroup">
+
+        <label class="radio-opt selected" onclick="selectFormulaType('none',this)" style="flex-direction:column;align-items:flex-start;gap:2px;padding:10px 12px">
+          <span style="font-size:13px;font-weight:600">بدون حساب</span>
+          <span style="font-size:11px;color:var(--tx-lo)">المستخدم يُدخل القيمة يدوياً</span>
+          <input type="radio" name="ftype" value="none" checked style="display:none">
+        </label>
+
+        <label class="radio-opt" onclick="selectFormulaType('lookup',this)" style="flex-direction:column;align-items:flex-start;gap:2px;padding:10px 12px">
+          <span style="font-size:13px;font-weight:600">بحث وجلب قيمة</span>
+          <span style="font-size:11px;color:var(--tx-lo)">يجلب قيمة من شيت آخر بناءً على تطابق</span>
+          <input type="radio" name="ftype" value="lookup" style="display:none">
+        </label>
+
+        <label class="radio-opt" onclick="selectFormulaType('arithmetic',this)" style="flex-direction:column;align-items:flex-start;gap:2px;padding:10px 12px">
+          <span style="font-size:13px;font-weight:600">حساب رياضي</span>
+          <span style="font-size:11px;color:var(--tx-lo)">جمع أو ضرب أو قسمة أعمدة في نفس الصف</span>
+          <input type="radio" name="ftype" value="arithmetic" style="display:none">
+        </label>
+
+        <label class="radio-opt" onclick="selectFormulaType('conditional',this)" style="flex-direction:column;align-items:flex-start;gap:2px;padding:10px 12px">
+          <span style="font-size:13px;font-weight:600">قيمة شرطية</span>
+          <span style="font-size:11px;color:var(--tx-lo)">إذا تحقق شرط معين أعطِ قيمة، وإلا أعطِ قيمة أخرى</span>
+          <input type="radio" name="ftype" value="conditional" style="display:none">
+        </label>
+
+        <label class="radio-opt" onclick="selectFormulaType('discount',this)" style="grid-column:1/-1;flex-direction:column;align-items:flex-start;gap:2px;padding:10px 12px">
+          <span style="font-size:13px;font-weight:600">توزيع الخصم على الفاتورة</span>
+          <span style="font-size:11px;color:var(--tx-lo)">يوزع خصم الفاتورة على كل صنف بنسبة قيمته من الإجمالي</span>
+          <input type="radio" name="ftype" value="discount" style="display:none">
+        </label>
+
+      </div>
+    </div>
+
+    <!-- Formula builder -->
+    <div id="formulaBuilderWrap" style="display:none">
+
+      <!-- ══ ARITHMETIC BUILDER ══ -->
+      <div id="fb-arithmetic" class="formula-builder" style="display:none">
+        <div class="fb-title">📐 الحساب الرياضي — اختر الأعمدة واكتب العملية</div>
+        <p style="font-size:12px;color:var(--tx-mid);margin-bottom:10px">
+          انقر على اسم العمود لإضافته للمعادلة، ثم أضف العملية الحسابية بين الأعمدة.
+          <br>مثال: <span style="font-family:var(--f-mono);color:var(--cyan)">الكمية × سعر الوحدة</span>
+        </p>
+        <div class="fb-title" style="margin-bottom:6px">الأعمدة المتاحة في هذا الشيت:</div>
+        <div class="fb-col-picker" id="fb-arithmetic-cols"></div>
+        <div style="display:flex;gap:8px;align-items:center;margin:10px 0 6px">
+          <span style="font-size:11px;color:var(--tx-mid);white-space:nowrap">المعادلة:</span>
+          <input class="fb-expr-input" id="fb-arithmetic-expr"
+            placeholder="مثال: [الكمية] × [سعر الوحدة]"
+            style="flex:1" readonly>
+        </div>
+        <div class="fb-ops">
+          <button class="fb-op" onclick="insertArithOp(' + ')">+ جمع</button>
+          <button class="fb-op" onclick="insertArithOp(' - ')">− طرح</button>
+          <button class="fb-op" onclick="insertArithOp(' * ')">× ضرب</button>
+          <button class="fb-op" onclick="insertArithOp(' / ')">÷ قسمة</button>
+          <button class="fb-op" onclick="insertArithOp('(')">( قوس</button>
+          <button class="fb-op" onclick="insertArithOp(')')">قوس )</button>
+          <button class="fb-op" onclick="clearArithExpr()" style="color:var(--red)">مسح</button>
+        </div>
+      </div>
+
+      <!-- ══ LOOKUP BUILDER ══ -->
+      <div id="fb-lookup" class="formula-builder" style="display:none">
+        <div class="fb-title">🔍 البحث وجلب القيمة — كيف تعمل؟</div>
+        <p style="font-size:12px;color:var(--tx-mid);margin-bottom:14px">
+          يبحث هذا العمود عن قيمة عمود في <b>هذا الشيت</b> داخل شيت آخر،
+          ثم يجلب البيانات المقابلة لها. مثال: ابحث عن الباركود في شيت Barcode وأحضر اسم المنتج.
+        </p>
+        <div class="field-row">
+          <div class="field-group" style="margin-bottom:0">
+            <div class="field-label" style="font-size:11px">عمود المطابقة (من هذا الشيت)</div>
+            <div style="font-size:11px;color:var(--tx-lo);margin-bottom:4px">القيمة التي سنبحث عنها</div>
+            <select class="field-select" id="fb-lookup-key" style="height:38px"></select>
+          </div>
+          <div class="field-group" style="margin-bottom:0">
+            <div class="field-label" style="font-size:11px">الشيت الذي سنبحث فيه</div>
+            <div style="font-size:11px;color:var(--tx-lo);margin-bottom:4px">المصدر الخارجي</div>
+            <select class="field-select" id="fb-lookup-src-sheet" onchange="refreshLookupCols()" style="height:38px">
+              <option>Purchases</option><option>Kasa</option><option>Barcode</option><option>Phinex</option>
+            </select>
+          </div>
+        </div>
+        <div style="text-align:center;padding:8px 0;color:var(--cyan);font-size:18px">↓</div>
+        <div class="field-row">
+          <div class="field-group" style="margin-bottom:0">
+            <div class="field-label" style="font-size:11px">عمود المطابقة في المصدر</div>
+            <div style="font-size:11px;color:var(--tx-lo);margin-bottom:4px">نطابق معه القيمة أعلاه</div>
+            <select class="field-select" id="fb-lookup-src-key" style="height:38px"></select>
+          </div>
+          <div class="field-group" style="margin-bottom:0">
+            <div class="field-label" style="font-size:11px">العمود الذي نريد جلبه</div>
+            <div style="font-size:11px;color:var(--tx-lo);margin-bottom:4px">هذه القيمة ستظهر في العمود</div>
+            <select class="field-select" id="fb-lookup-value" style="height:38px"></select>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ CONDITIONAL BUILDER ══ -->
+      <div id="fb-conditional" class="formula-builder" style="display:none">
+        <div class="fb-title">⚖️ القيمة الشرطية — إذا / وإلا</div>
+        <p style="font-size:12px;color:var(--tx-mid);margin-bottom:14px">
+          إذا تحقق الشرط → تظهر قيمة معينة. وإذا لم يتحقق → تظهر قيمة أخرى.
+          <br>مثال: إذا كانت <b>الكمية أكبر من 10</b> → اكتب "كمية كبيرة" وإلا اكتب "كمية عادية"
+        </p>
+        <div style="background:rgba(0,212,255,0.04);border:1px solid var(--border);border-radius:var(--r-md);padding:14px;margin-bottom:12px">
+          <div class="fb-title" style="margin-bottom:10px">الشرط</div>
+          <div class="field-row">
+            <div class="field-group" style="margin-bottom:0">
+              <div class="field-label" style="font-size:10px">العمود</div>
+              <select class="field-select" id="fb-cond-col" style="height:34px" onchange="updateCondPreview()"></select>
+            </div>
+            <div class="field-group" style="margin-bottom:0">
+              <div class="field-label" style="font-size:10px">المقارنة</div>
+              <select class="field-select" id="fb-cond-op" style="height:34px" onchange="updateCondPreview()">
+                <option value=">">> أكبر من</option>
+                <option value=">=">>= أكبر من أو يساوي</option>
+                <option value="<">< أصغر من</option>
+                <option value="<="><= أصغر من أو يساوي</option>
+                <option value="==">= يساوي</option>
+                <option value="!=">≠ لا يساوي</option>
+              </select>
+            </div>
+            <div class="field-group" style="margin-bottom:0">
+              <div class="field-label" style="font-size:10px">القيمة</div>
+              <input class="field-input" id="fb-cond-val" placeholder="0" style="height:34px" oninput="updateCondPreview()">
+            </div>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-group" style="margin-bottom:0">
+            <div class="field-label" style="font-size:11px">✓ إذا تحقق الشرط → أعطِ</div>
+            <input class="field-input" id="fb-cond-true" placeholder='مثال: "كبير" أو 100 أو اسم عمود' style="height:38px" oninput="updateCondPreview()">
+          </div>
+          <div class="field-group" style="margin-bottom:0">
+            <div class="field-label" style="font-size:11px">✗ وإلا → أعطِ</div>
+            <input class="field-input" id="fb-cond-false" placeholder='مثال: "صغير" أو 0' style="height:38px" oninput="updateCondPreview()">
+          </div>
+        </div>
+        <div style="margin-top:10px;padding:10px 12px;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.2);border-radius:var(--r-md);font-size:12px;font-family:var(--f-mono);color:var(--purple)" id="fb-cond-preview">
+          ← اختر العمود والشرط أعلاه ليظهر الشرح هنا
+        </div>
+      </div>
+
+      <!-- ══ DISCOUNT BUILDER ══ -->
+      <div id="fb-discount" class="formula-builder" style="display:none">
+        <div class="fb-title">💰 توزيع الخصم — كيف يعمل؟</div>
+        <p style="font-size:12px;color:var(--tx-mid);margin-bottom:14px">
+          عند وضع خصم على الفاتورة، يوزعه هذا العمود على كل صنف
+          بنسبة قيمته من إجمالي الفاتورة. مثال: فاتورة بها صنفان —
+          الأول بـ 60 جنيه والثاني بـ 40 جنيه، والخصم 10 جنيه →
+          الأول يأخذ 6 جنيه والثاني يأخذ 4 جنيه.
+        </p>
+        <div class="field-row">
+          <div class="field-group" style="margin-bottom:0">
+            <div class="field-label" style="font-size:11px">عمود إجمالي سعر الصنف</div>
+            <div style="font-size:11px;color:var(--tx-lo);margin-bottom:4px">مثال: عمود "الإجمالي" = الكمية × السعر</div>
+            <select class="field-select" id="fb-disc-total" style="height:38px"></select>
+          </div>
+          <div class="field-group" style="margin-bottom:0">
+            <div class="field-label" style="font-size:11px">عمود مبلغ الخصم</div>
+            <div style="font-size:11px;color:var(--tx-lo);margin-bottom:4px">المبلغ الإجمالي للخصم على الفاتورة</div>
+            <select class="field-select" id="fb-disc-amount" style="height:38px"></select>
+          </div>
+        </div>
+        <div class="field-group" style="margin-top:14px">
+          <div class="field-label">ماذا تريد أن يُظهر هذا العمود؟</div>
+          <div class="radio-group" style="flex-direction:column;gap:8px;margin-top:6px">
+            <label class="radio-opt selected" onclick="selectDiscMode('new_price',this)" style="flex-direction:column;align-items:flex-start;gap:2px;padding:10px 12px">
+              <span style="font-weight:600">السعر النهائي بعد الخصم</span>
+              <span style="font-size:11px;color:var(--tx-lo)">إجمالي الصنف − حصته من الخصم</span>
+              <input type="radio" name="dmode" value="new_price" checked style="display:none">
+            </label>
+            <label class="radio-opt" onclick="selectDiscMode('share',this)" style="flex-direction:column;align-items:flex-start;gap:2px;padding:10px 12px">
+              <span style="font-weight:600">مبلغ الخصم على هذا الصنف فقط</span>
+              <span style="font-size:11px;color:var(--tx-lo)">حصة هذا الصنف من إجمالي الخصم</span>
+              <input type="radio" name="dmode" value="share" style="display:none">
+            </label>
+            <label class="radio-opt" onclick="selectDiscMode('invoice_total_after',this)" style="flex-direction:column;align-items:flex-start;gap:2px;padding:10px 12px">
+              <span style="font-weight:600">إجمالي الفاتورة بعد الخصم</span>
+              <span style="font-size:11px;color:var(--tx-lo)">مجموع كل الأصناف − إجمالي الخصم</span>
+              <input type="radio" name="dmode" value="invoice_total_after" style="display:none">
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formula preview -->
+      <div class="formula-preview" id="formulaPreview" style="display:none"></div>
+    </div>
+
+    <!-- Width -->
+    <div class="field-row" style="margin-top:14px">
+      <div class="field-group" style="margin-bottom:0">
+        <div class="field-label">عرض العمود (px)</div>
+        <input class="field-input" id="col-width" type="number" value="130" min="60" max="500" style="height:34px">
+      </div>
+      <div class="field-group" style="margin-bottom:0">
+        <div class="field-label">تجميد</div>
+        <select class="field-select" id="col-frozen" style="height:34px">
+          <option value="0">لا</option>
+          <option value="1">نعم</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="modal-btn primary" onclick="saveColumn()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        حفظ العمود
+      </button>
+      <button class="modal-btn danger-ghost" id="deleteColBtn" onclick="deleteColumn()" style="display:none">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+        حذف العمود
+      </button>
+      <button class="modal-btn ghost" onclick="closeModal('colModal')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     DATA VALIDATION MODAL
+══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="validModal">
+  <div class="modal-win">
+    <div class="modal-header">
+      <div class="modal-title">
+        <div class="modal-title-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        </div>
+        التحقق من البيانات
+      </div>
+      <button class="modal-close" onclick="closeModal('validModal')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="field-group">
+      <div class="field-label">العمود</div>
+      <select class="field-select" id="valid-col"></select>
+    </div>
+    <div class="field-group">
+      <div class="field-label">نوع التحقق</div>
+      <div class="radio-group" id="validTypeGroup">
+        <label class="radio-opt selected" onclick="selectValidType('none',this)"><input type="radio" name="vtype" value="none" checked>بدون</label>
+        <label class="radio-opt" onclick="selectValidType('list_range',this)"><input type="radio" name="vtype" value="list_range">قائمة من نطاق</label>
+        <label class="radio-opt" onclick="selectValidType('number_range',this)"><input type="radio" name="vtype" value="number_range">نطاق رقمي</label>
+        <label class="radio-opt" onclick="selectValidType('no_zero',this)"><input type="radio" name="vtype" value="no_zero">منع الصفر</label>
+      </div>
+    </div>
+    <div id="valid-list-opts" style="display:none">
+      <div class="field-row">
+        <div class="field-group" style="margin-bottom:0">
+          <div class="field-label" style="font-size:10px">الشيت المصدر</div>
+          <select class="field-select" id="valid-src-sheet" style="height:34px">
+            <option>Purchases</option><option>Kasa</option><option>Barcode</option><option>Phinex</option>
+          </select>
+        </div>
+        <div class="field-group" style="margin-bottom:0">
+          <div class="field-label" style="font-size:10px">العمود المصدر</div>
+          <select class="field-select" id="valid-src-col" style="height:34px"></select>
+        </div>
+      </div>
+    </div>
+    <div id="valid-range-opts" style="display:none">
+      <div class="field-row">
+        <div class="field-group" style="margin-bottom:0">
+          <div class="field-label" style="font-size:10px">الحد الأدنى</div>
+          <input class="field-input" id="valid-min" type="number" style="height:34px">
+        </div>
+        <div class="field-group" style="margin-bottom:0">
+          <div class="field-label" style="font-size:10px">الحد الأقصى</div>
+          <input class="field-input" id="valid-max" type="number" style="height:34px">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn primary" onclick="saveValidation()">حفظ التحقق</button>
+      <button class="modal-btn ghost" onclick="closeModal('validModal')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     INSERT LINK MODAL
+══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="linkModal">
+  <div class="modal-win" style="max-width:440px">
+    <div class="modal-header">
+      <div class="modal-title">
+        <div class="modal-title-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+        </div>
+        إدراج رابط
+      </div>
+      <button class="modal-close" onclick="closeModal('linkModal')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="field-group">
+      <div class="field-label">الخلية المحددة</div>
+      <div style="font-family:var(--f-mono);font-size:13px;color:var(--cyan);padding:8px 0" id="link-cell-ref">—</div>
+    </div>
+    <div class="field-group">
+      <div class="field-label">عنوان الرابط (URL)</div>
+      <input class="field-input" id="link-url" placeholder="https://" dir="ltr">
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn primary" onclick="saveLink()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        إدراج الرابط
+      </button>
+      <button class="modal-btn danger-ghost" onclick="removeLink()">إزالة الرابط</button>
+      <button class="modal-btn ghost" onclick="closeModal('linkModal')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- Holographic Warning -->
+<div class="holo-warning" id="holoWarning">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+  <span id="holoWarningText"></span>
+</div>
+
+<!-- Toast host -->
+<div class="toast-host" id="toastHost"></div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SCRIPTS
+══════════════════════════════════════════════════════════ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/renderer.js"></script>
+<script src="js/workspace.js"></script>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   APP STATE
+═══════════════════════════════════════════════════════════════ */
+const App = {
+  branchId:    'branch-01',
+  branchName:  'المحل الأول',
+  sheetName:   'Purchases',
+  user:        { uid: 'user-01', name: 'المستخدم', role: 'admin' },
+  branches: [
+    { id:'branch-01', name:'المحل الأول',  label:'B1' },
+    { id:'branch-02', name:'المحل الثاني', label:'B2' },
+    { id:'branch-03', name:'المحل الثالث', label:'B3' },
+    { id:'branch-04', name:'المحل الرابع', label:'B4' },
+  ],
+  // Engine instances
+  workbook:    null,
+  renderer:    null,
+  controller:  null,
+  worker:        null,
+  workerReady:   null,
+  workerAvailable: false,
+  // Undo / Redo stacks
+  undoStack: [],  // [{type, sheetName, row, colId, before, after}]
+  redoStack: [],
+  // UI state
+  activeCell:  null,
+  activeColId: null,
+  findOpts:    { exact:false, case:false, col:false },
+  frozenCols:  0,
+  frozenRows:  0,
+  scrollTop:   0,
+  scrollLeft:  0,
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════════════ */
+window.addEventListener('DOMContentLoaded', async () => {
+  // ── Session guard ──
+  // Redirect to login if not authenticated. Falls back to allowing access
+  // only if GRSession itself failed to load (keeps app usable offline/dev).
+  const session = window.GRSession ? window.GRSession.get() : null;
+  if (window.GRSession && !session) {
+    window.location.href = 'index.html';
+    return;
+  }
+  if (session) {
+    App.user.uid     = session.uid;
+    App.user.name    = session.name;
+    App.user.role    = session.role ?? 'user';
+    App.userBranches = session.branches ?? [];
+    const activeBranch = window.GRSession.getBranch();
+    if (activeBranch) App.branchId = activeBranch;
+    // Restrict visible branches to what this user is actually allowed
+    if (App.user.role !== 'admin' && App.userBranches.length) {
+      App.branches = App.branches.filter(b => App.userBranches.includes(b.id));
+    }
+  }
+
+  initBackground();
+  initBranchPanel();
+  initEngine();
+  initRenderer();
+  bindKeys();
+  updateStatusBar();
+  await restoreSession();   // now async (IndexedDB)
+
+  // Load the first page of rows from Firestore (rows 0-199) immediately
+  // so the sheet isn't blank on first open when there is existing data.
+  loadVisibleRows(0);
+});
+
+function initEngine() {
+  const { Workbook } = self.GREngine;
+  App.workbook = new Workbook(App.branchId);
+
+  // Initialize the formula worker. Both the main-thread workbook and the
+  // worker-side workbook start empty and are kept in sync from this point
+  // forward via mirrored writes (see commitCellEdit, saveColumn, etc.).
+  // This moves the expensive part — topological sort + formula evaluation
+  // across potentially thousands of rows — off the main thread, while
+  // App.workbook stays the source of truth for instant synchronous reads
+  // (rendering, validation, summaries, export) so nothing about reading
+  // data changes behavior.
+  App.worker = new window.GRWorkspace.WorkerBridge('js/formula.worker.js');
+  App.workerReady = App.worker.send('INIT_WORKBOOK', { branchId: App.branchId })
+    .then(async () => {
+      App.workerAvailable = true;
+      // Sync column definitions for all 4 sheets immediately so the worker
+      // has the correct structure before any edits arrive. This is a no-op
+      // for fresh sessions (empty columns arrays), but critical after draft
+      // restore or future Firestore loads that pre-populate App.workbook.
+      const sheetNames = ['Purchases', 'Kasa', 'Barcode', 'Phinex'];
+      await Promise.all(sheetNames.map(sn => {
+        const cols = App.workbook.getSheet(sn)?.columns ?? [];
+        if (!cols.length) return Promise.resolve();
+        return App.worker.send('LOAD_COLUMNS', {
+          branchId: App.branchId, sheetName: sn, columns: cols,
+        });
+      }));
+    })
+    .catch(err => {
+      console.warn('[Worker] Init failed, falling back to main-thread-only computation:', err);
+      App.workerAvailable = false;
+    });
+}
+
+function initRenderer() {
+  const wrap = document.getElementById('gridWrap');
+  App.renderer = new self.GRRenderer.VirtualRenderer(wrap, {
+    frozenRows: App.frozenRows,
+    frozenCols: App.frozenCols,
+  });
+
+  App.renderer.onCellClick    = onCellClick;
+  App.renderer.onCellDblClick = onCellDblClick;
+  App.renderer.onSelectionChange = onSelectionChange;
+  App.renderer.onScroll = ({ firstVisibleRow }) => {
+    loadVisibleRows(firstVisibleRow);
+  };
+
+  // Set initial sheet
+  const sheet = App.workbook.getSheet(App.sheetName);
+  App.renderer.setSheet({
+    totalRows: 50_000,
+    columns:   sheet.columns,
+    frozenRows: 0,
+    frozenCols: 0,
+  });
+
+  document.getElementById('sb-colcount').textContent = sheet.columns.length;
+}
+
+async function restoreSession() {
+  // Restore branch from session
+  const saved = sessionStorage.getItem('gr_branch');
+  if (saved) switchBranch(saved, false);
+
+  // Check for draft (IndexedDB with localStorage fallback)
+  const draft = await loadDraft(App.branchId, App.sheetName);
+  if (draft && Object.keys(draft).length > 0) {
+    try {
+      const rows = Object.entries(draft).map(([r, d]) => ({ rowIndex: parseInt(r), data: d }));
+      rows.forEach(({ rowIndex, data }) => {
+        App.workbook.getSheet(App.sheetName).loadRow(rowIndex, data);
+      });
+      refreshViewport();
+      rebuildDraftCache();
+      showDraftIndicator(true);
+      showToast('تم استعادة مسودة غير محفوظة', 'warn');
+
+      // Sync restored rows to the worker
+      if (App.worker && rows.length > 0) {
+        App.workerReady.then(() => {
+          if (!App.workerAvailable) return;
+          App.worker.send('LOAD_ROWS', {
+            branchId:  App.branchId,
+            sheetName: App.sheetName,
+            rows,
+          }).catch(err => console.warn('[Worker] draft sync failed:', err));
+        });
+      }
+    } catch(e) { console.warn('[Draft] restore failed:', e); }
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BACKGROUND PARTICLES
+═══════════════════════════════════════════════════════════════ */
+function initBackground() {
+  const host = document.getElementById('bgSystem');
+  const colors = ['rgba(0,212,255,0.6)','rgba(0,112,255,0.5)','rgba(139,92,246,0.5)'];
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'bg-particle';
+    const size = Math.random() * 3 + 1;
+    const dur  = Math.random() * 20 + 15;
+    const delay = Math.random() * -20;
+    p.style.cssText = `
+      width:${size}px;height:${size}px;
+      left:${Math.random()*100}%;
+      background:${colors[i%3]};
+      animation-duration:${dur}s;
+      animation-delay:${delay}s;
+    `;
+    host.appendChild(p);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BRANCH PANEL
+═══════════════════════════════════════════════════════════════ */
+function initBranchPanel() {
+  const list = document.getElementById('branchList');
+  list.innerHTML = '';
+  App.branches.forEach(b => {
+    const el = document.createElement('div');
+    el.className = `bp-item${b.id === App.branchId ? ' active' : ''}`;
+    el.dataset.id = b.id;
+    el.innerHTML = `
+      <span class="bp-dot"></span>
+      <span class="bp-name">${b.name}</span>
+      <span class="bp-badge">${b.label}</span>
+    `;
+    el.onclick = () => switchBranch(b.id, true);
+    list.appendChild(el);
+  });
+  document.getElementById('branchLabel').textContent =
+    App.branches.find(b => b.id === App.branchId)?.label ?? 'B1';
+  document.getElementById('sb-branch-name').textContent =
+    App.branches.find(b => b.id === App.branchId)?.name ?? '—';
+  document.getElementById('sb-user-name').textContent = App.user.name;
+}
+
+function toggleBranchPanel() {
+  document.getElementById('branchPanel').classList.toggle('open');
+}
+
+/* ── Mobile sidebar drawer ── */
+function toggleMobileSidebar() {
+  const isOpen = document.querySelector('.sidebar').classList.contains('mobile-open');
+  if (isOpen) closeMobileSidebar();
+  else openMobileSidebar();
+}
+
+function openMobileSidebar() {
+  document.querySelector('.sidebar').classList.add('mobile-open');
+  document.getElementById('mobileSidebarBackdrop').classList.add('show');
+}
+
+function closeMobileSidebar() {
+  document.querySelector('.sidebar').classList.remove('mobile-open');
+  document.getElementById('mobileSidebarBackdrop').classList.remove('show');
+}
+
+function switchBranch(branchId, reload = true) {
+  App.branchId = branchId;
+  const b = App.branches.find(x => x.id === branchId);
+  document.getElementById('branchLabel').textContent = b?.label ?? 'B1';
+  document.getElementById('sb-branch-name').textContent = b?.name ?? '—';
+  document.getElementById('branchPanel').classList.remove('open');
+  sessionStorage.setItem('gr_branch', branchId);
+
+  // Invalidate all chunk caches — data belongs to the previous branch
+  ['Purchases','Kasa','Barcode','Phinex'].forEach(s => _invalidateChunks(s));
+
+  // Clear undo/redo history — previous branch's edits shouldn't be undoable here
+  App.undoStack = [];
+  App.redoStack = [];
+  _updateUndoIndicator();
+
+  // Update active state
+  document.querySelectorAll('.bp-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.id === branchId);
+  });
+
+  if (reload) {
+    // Re-init workbook for new branch
+    const { Workbook } = self.GREngine;
+    App.workbook = new Workbook(branchId);
+    refreshViewport();
+    showToast(`تم الانتقال إلى ${b?.name}`, 'info');
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SHEET SWITCHING
+═══════════════════════════════════════════════════════════════ */
+function switchSheet(name) {
+  // Flush any pending draft for the sheet we're leaving synchronously
+  // (cancels timer and saves immediately) before we switch context.
+  if (_draftTimer) {
+    clearTimeout(_draftTimer);
+    saveDraft(); // fire-and-forget async — doesn't need to complete before switch
+  }
+  App.sheetName = name;
+  document.querySelectorAll('.sheet-tab').forEach(t => {
+    t.classList.toggle('active', t.id === `tab-${name.toLowerCase()}`);
+  });
+  const nameLower = name.toLowerCase();
+  document.querySelectorAll('.nav-btn[id^="nav-"]').forEach(b => {
+    b.classList.toggle('active', b.id === `nav-${nameLower}`);
+  });
+  document.getElementById('tbSheetName').textContent = `// ${name.toUpperCase()}`;
+  document.getElementById('closeInvoiceBtn').style.display =
+    name === 'Purchases' ? 'flex' : 'none';
+
+  const sheet = App.workbook.getSheet(name);
+  App.renderer.setSheet({
+    totalRows: 50_000,
+    columns:   sheet.columns,
+    frozenRows: App.frozenRows,
+    frozenCols: App.frozenCols,
+  });
+  App.renderer.setInvoiceBoundaries([...sheet.invoiceBoundaries]);
+  document.getElementById('sb-colcount').textContent = sheet.columns.length;
+  refreshViewport();
+
+  // Invalidate the chunk cache for the new sheet so the first scroll
+  // triggers a fresh Firestore load rather than skipping it
+  _invalidateChunks(name);
+
+  // Proactively load the first page (rows 0-199) immediately on switch
+  loadVisibleRows(0);
+
+  // Keep the worker's column definitions in sync with the active sheet so
+  // formula recalculation uses the correct column structure.
+  if (App.worker && sheet.columns.length > 0) {
+    App.workerReady.then(() => {
+      if (!App.workerAvailable) return;
+      App.worker.send('LOAD_COLUMNS', {
+        branchId: App.branchId, sheetName: name, columns: sheet.columns,
+      }).catch(err => console.warn('[Worker] column sync on sheet switch failed:', err));
+    });
+  }
+}
+
+function switchPage(page) {
+  if (['purchases','kasa','barcode','phinex'].includes(page)) {
+    const map = { purchases:'Purchases', kasa:'Kasa', barcode:'Barcode', phinex:'Phinex' };
+    switchSheet(map[page]);
+    closeMobileSidebar();
+  } else if (page === 'log') {
+    window.location.href = 'log.html';
+  } else if (page === 'settings') {
+    window.location.href = 'settings.html';
+  } else {
+    showToast(`صفحة ${page} — قيد البناء`, 'info');
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   VIEWPORT / DATA
+═══════════════════════════════════════════════════════════════ */
+function refreshViewport() {
+  const sheet = App.workbook.getSheet(App.sheetName);
+  const viewData = {};
+  for (const [row, rowMap] of sheet.cells) {
+    viewData[row] = {};
+    for (const [colId, cell] of rowMap) {
+      const val = cell.m !== null ? cell.m : cell.v;
+      if (val !== null) viewData[row][colId] = val;
+      if (cell.lnk) viewData[row][`${colId}__lnk`] = cell.lnk;
+      if (cell.m !== null) viewData[row][`${colId}__manual`] = true;
+    }
+  }
+  App.renderer.loadData(viewData);
+}
+
+/**
+ * Targeted refresh — only rebuilds view data for the given row indices
+ * instead of the entire sheet. This is the hot path for single-cell edits,
+ * link changes, and small find/replace operations, where rebuilding all
+ * 50,000 rows on every keystroke would freeze the UI at scale.
+ * Falls back to a full refreshViewport() if no rows are specified, since
+ * an empty/undefined set usually means "we don't know what changed" —
+ * safer to repaint everything than to silently miss an update.
+ */
+function refreshRows(rowIndices) {
+  if (!rowIndices || (rowIndices instanceof Set ? rowIndices.size === 0 : rowIndices.length === 0)) {
+    refreshViewport();
+    return;
+  }
+  const sheet    = App.workbook.getSheet(App.sheetName);
+  const viewData = {};
+  for (const row of rowIndices) {
+    const rowMap = sheet.cells.get(row);
+    viewData[row] = {};
+    if (!rowMap) continue; // row was cleared entirely — still report empty so renderer can blank it
+    for (const [colId, cell] of rowMap) {
+      const val = cell.m !== null ? cell.m : cell.v;
+      if (val !== null) viewData[row][colId] = val;
+      if (cell.lnk) viewData[row][`${colId}__lnk`] = cell.lnk;
+      if (cell.m !== null) viewData[row][`${colId}__manual`] = true;
+    }
+  }
+  App.renderer.loadData(viewData);
+}
+
+/**
+ * Extract the row indices affected on the CURRENT sheet from a
+ * workbook.recalc()/fullRecalc() updated-map result.
+ */
+function rowsFromUpdated(updated) {
+  return updated?.get?.(App.sheetName) ?? null;
+}
+
+/**
+ * Mirror a single cell write to the worker-side workbook and let the
+ * worker perform the (potentially expensive) recalculation off the main
+ * thread. Returns the set of affected row indices on success.
+ *
+ * On any failure (worker unavailable, not yet initialized, message
+ * error), falls back to the original synchronous main-thread recalc —
+ * the exact same code path that existed before worker integration —
+ * so correctness is never at risk, only the performance benefit.
+ *
+ * @returns {Promise<Set<number>|null>} affected row indices, or null
+ */
+async function recalcViaWorker(mirrorFn) {
+  if (!App.worker || !App.workerAvailable) {
+    return rowsFromUpdated(App.workbook.recalc());
+  }
+
+  try {
+    await App.workerReady;
+    if (!App.workerAvailable) return rowsFromUpdated(App.workbook.recalc());
+
+    const { updated } = await mirrorFn();
+    const affectedRows = updated?.[App.sheetName];
+    if (!affectedRows || !affectedRows.length) return new Set();
+
+    // Pull the worker's computed values back and merge into App.workbook
+    // so every existing synchronous read (rendering, summaries, export,
+    // find/replace) continues to see correct, up-to-date data.
+    const { rows } = await App.worker.send('SERIALIZE_ROWS', {
+      branchId: App.branchId, sheetName: App.sheetName, rowIndices: affectedRows,
+    });
+
+    const sheet = App.workbook.getSheet(App.sheetName);
+    for (const [rowStr, data] of Object.entries(rows)) {
+      sheet.loadRow(parseInt(rowStr), data);
+    }
+
+    return new Set(affectedRows);
+  } catch (err) {
+    console.warn('[Worker] recalc failed, falling back to main thread:', err);
+    return rowsFromUpdated(App.workbook.recalc());
+  }
+}
+
+/**
+ * Same as recalcViaWorker but for bulk operations (paste, import, column
+ * structure changes, invoice boundary changes) that require a full
+ * recalculation across the sheet rather than a single dirty cell.
+ */
+async function fullRecalcViaWorker(mirrorFn) {
+  if (!App.worker || !App.workerAvailable) {
+    App.workbook.fullRecalc();
+    return;
+  }
+
+  try {
+    await App.workerReady;
+    if (!App.workerAvailable) { App.workbook.fullRecalc(); return; }
+
+    const { updated } = await mirrorFn();
+    const affectedRows = updated?.[App.sheetName];
+    if (!affectedRows || !affectedRows.length) return;
+
+    const { rows } = await App.worker.send('SERIALIZE_ROWS', {
+      branchId: App.branchId, sheetName: App.sheetName, rowIndices: affectedRows,
+    });
+
+    const sheet = App.workbook.getSheet(App.sheetName);
+    for (const [rowStr, data] of Object.entries(rows)) {
+      sheet.loadRow(parseInt(rowStr), data);
+    }
+  } catch (err) {
+    console.warn('[Worker] fullRecalc failed, falling back to main thread:', err);
+    App.workbook.fullRecalc();
+  }
+}
+
+/**
+ * Log a user action to Firestore (batched/queued internally by
+ * FirebaseSync, flushed every ~2s — see _queueLog in firebase-sync.js).
+ * Silently no-ops if Firebase isn't configured, so logging can never
+ * block or break the actual user-facing action it's attached to.
+ */
+function logActivity(action, meta = {}) {
+  try {
+    const sync = window.GRFirebaseInit?.getSync?.();
+    if (sync?.isSignedIn) {
+      sync.queueLog(App.branchId, action, App.sheetName, meta);
+    }
+  } catch (e) {
+    console.warn('[Activity Log] failed:', e);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   UNDO / REDO ENGINE
+   Stack-based undo for cell edits and paste operations.
+   Each op stores: { type, sheetName, row, colId, before, after }
+   For paste ops: { type:'paste', sheetName, cells:[{row,colId,before,after}] }
+   Max 100 entries — oldest entry dropped when stack is full.
+═══════════════════════════════════════════════════════════════ */
+const MAX_UNDO = 100;
+
+/**
+ * Push a single cell change onto the undo stack.
+ * Clears the redo stack (branching history is not supported).
+ */
+function pushUndo(op) {
+  App.undoStack.push(op);
+  if (App.undoStack.length > MAX_UNDO) App.undoStack.shift();
+  App.redoStack = [];
+  _updateUndoIndicator();
+}
+
+function _updateUndoIndicator() {
+  const el    = document.getElementById('undoIndicator');
+  const count = document.getElementById('undoCount');
+  if (!el || !count) return;
+  const n = App.undoStack.length;
+  el.classList.toggle('visible', n > 0);
+  count.textContent = n;
+}
+
+/**
+ * Undo the most recent operation.
+ * Re-applies the "before" value to the affected cells, then recalculates.
+ */
+async function doUndo() {
+  const op = App.undoStack.pop();
+  if (!op) { showToast('لا يوجد شيء للتراجع عنه', 'info'); return; }
+
+  App.redoStack.push(op);
+
+  const sheet = App.workbook.getSheet(op.sheetName ?? App.sheetName);
+  const cells = op.type === 'paste' ? op.cells : [op];
+
+  for (const { row, colId, before } of cells) {
+    if (before === undefined) sheet.clearCell(row, colId);
+    else                      sheet.setCell(row, colId, before, true);
+  }
+
+  // Route recalc through worker; fallback handled inside
+  const affectedRows = await recalcViaWorker(async () => {
+    // Mirror each cell revert to worker
+    const sends = cells.map(({ row, colId, before }) =>
+      App.worker.send('SET_CELL', {
+        branchId: App.branchId, sheetName: op.sheetName ?? App.sheetName,
+        row, colId, value: before ?? null, isManual: true,
+      }).catch(() => {})
+    );
+    if (sends.length) await Promise.all(sends);
+    return App.worker.send('FULL_RECALC', { branchId: App.branchId });
+  });
+
+  refreshRows(affectedRows);
+  scheduleDraft(affectedRows ?? cells.map(c => c.row));
+  _updateUndoIndicator();
+  showToast(`↩ تراجع — ${cells.length > 1 ? cells.length + ' خلية' : 'خلية واحدة'}`, 'info');
+}
+
+/**
+ * Redo the most recently undone operation.
+ */
+async function doRedo() {
+  const op = App.redoStack.pop();
+  if (!op) { showToast('لا يوجد شيء لإعادته', 'info'); return; }
+
+  App.undoStack.push(op);
+
+  const sheet = App.workbook.getSheet(op.sheetName ?? App.sheetName);
+  const cells = op.type === 'paste' ? op.cells : [op];
+
+  for (const { row, colId, after } of cells) {
+    if (after === undefined || after === null) sheet.clearCell(row, colId);
+    else sheet.setCell(row, colId, after, true);
+  }
+
+  const affectedRows = await recalcViaWorker(async () => {
+    const sends = cells.map(({ row, colId, after }) =>
+      App.worker.send('SET_CELL', {
+        branchId: App.branchId, sheetName: op.sheetName ?? App.sheetName,
+        row, colId, value: after ?? null, isManual: true,
+      }).catch(() => {})
+    );
+    if (sends.length) await Promise.all(sends);
+    return App.worker.send('FULL_RECALC', { branchId: App.branchId });
+  });
+
+  refreshRows(affectedRows);
+  scheduleDraft(affectedRows ?? cells.map(c => c.row));
+  _updateUndoIndicator();
+  showToast(`↪ إعادة — ${cells.length > 1 ? cells.length + ' خلية' : 'خلية واحدة'}`, 'info');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CTRL+V — PASTE FROM CLIPBOARD INTO GRID
+   Reads the clipboard as TSV (tab-separated, the format Excel uses
+   when you copy a range), parses it via ClipboardParser, and pastes
+   starting at the selected cell anchor. If no cell is selected, paste
+   is silently ignored.
+   Ctrl+C (copy the selected range to clipboard as TSV) is also handled
+   here for symmetry.
+═══════════════════════════════════════════════════════════════ */
+
+/**
+ * Paste TSV text into the grid starting at the anchor cell.
+ * Records an undo entry covering every changed cell.
+ */
+async function pasteFromClipboard(clipboardText) {
+  const anchor = App.renderer.selection?.anchor ?? App.activeCell;
+  if (!anchor) { showToast('حدد خلية أولاً ثم الصق', 'warn'); return; }
+
+  const { ClipboardParser } = self.GREngine;
+  const grid  = ClipboardParser.parse(clipboardText);
+  if (!grid.length || (grid.length === 1 && grid[0].length === 0)) return;
+
+  const sheet      = App.workbook.getSheet(App.sheetName);
+  const startRow   = anchor.row;
+  const startColIdx= anchor.col;
+
+  // Capture "before" state for undo before any writes happen
+  const undoCells = [];
+  for (let r = 0; r < grid.length; r++) {
+    for (let c = 0; c < grid[r].length; c++) {
+      const colDef = sheet.getColumnByIndex(startColIdx + c);
+      if (!colDef) continue;
+      const before = sheet.displayValue(startRow + r, colDef.id);
+      undoCells.push({ row: startRow + r, colId: colDef.id, before });
+    }
+  }
+
+  // Apply paste
+  const { written, errors } = sheet.pasteGrid(startRow, startColIdx, grid);
+  if (written === 0) { showToast('لا توجد بيانات للصق', 'info'); return; }
+
+  // Capture "after" state for undo
+  for (const cell of undoCells) {
+    cell.after = sheet.displayValue(cell.row, cell.colId);
+  }
+  pushUndo({ type:'paste', sheetName: App.sheetName, cells: undoCells });
+
+  // Route recalc through worker
+  await fullRecalcViaWorker(() =>
+    App.worker.send('PASTE_GRID', {
+      branchId:      App.branchId,
+      sheetName:     App.sheetName,
+      clipboardText,
+      startRow,
+      startColIndex: startColIdx,
+    })
+  );
+
+  refreshViewport();
+  rebuildDraftCache();
+  scheduleDraft();
+  logActivity('PASTE', { startRow, startColIdx, written, errorCount: errors.length });
+  if (errors.length) showToast(`تم اللصق — ${written} خلية (${errors.length} خطأ)`, 'warn');
+  else showToast(`تم اللصق — ${written} خلية`, 'success');
+}
+
+/**
+ * Copy the selected range to the clipboard as TSV.
+ */
+async function copySelectionToClipboard() {
+  const range = App.renderer.getSelectedRange();
+  if (!range) { showToast('حدد نطاقاً أولاً', 'warn'); return; }
+
+  const sheet = App.workbook.getSheet(App.sheetName);
+  const { ClipboardParser } = self.GREngine;
+  const grid = [];
+  for (let r = range.startRow; r <= range.endRow; r++) {
+    const row = [];
+    for (let c = range.startCol; c <= range.endCol; c++) {
+      const col = sheet.getColumnByIndex(c);
+      row.push(col ? (sheet.displayValue(r, col.id) ?? '') : '');
+    }
+    grid.push(row);
+  }
+  const tsv = ClipboardParser.serialize(grid);
+  try {
+    await navigator.clipboard.writeText(tsv);
+    showToast(`تم النسخ — ${(range.endRow - range.startRow + 1)} صف × ${(range.endCol - range.startCol + 1)} عمود`, 'success');
+  } catch {
+    // Fallback for browsers that block clipboard API without user gesture
+    const ta = document.createElement('textarea');
+    ta.value = tsv; ta.style.cssText = 'position:fixed;opacity:0';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    ta.remove();
+    showToast('تم النسخ', 'success');
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FIRESTORE PAGINATION — Load rows on scroll
+   Tracks which ranges are already loaded to avoid redundant fetches.
+   Each fetch covers the visible viewport + PREFETCH rows ahead.
+   Falls back gracefully when Firebase isn't configured.
+═══════════════════════════════════════════════════════════════ */
+const PAGE_SIZE = 200;    // rows per Firestore fetch
+const PREFETCH  = 100;    // rows to load ahead of the visible area
+
+/** Tracks loaded row ranges per sheet: { sheetKey: Set<chunkIndex> } */
+const _loadedChunks = {};
+
+function _chunkIndex(row) {
+  return Math.floor(row / PAGE_SIZE);
+}
+
+function _isChunkLoaded(sheetName, row) {
+  const key   = `${App.branchId}_${sheetName}`;
+  const chunk = _chunkIndex(row);
+  return _loadedChunks[key]?.has(chunk) ?? false;
+}
+
+function _markChunkLoaded(sheetName, startRow) {
+  const key   = `${App.branchId}_${sheetName}`;
+  const chunk = _chunkIndex(startRow);
+  if (!_loadedChunks[key]) _loadedChunks[key] = new Set();
+  _loadedChunks[key].add(chunk);
+}
+
+/** Called whenever the chunk cache should be invalidated (branch/sheet switch) */
+function _invalidateChunks(sheetName) {
+  const key = `${App.branchId}_${sheetName}`;
+  delete _loadedChunks[key];
+}
+
+/**
+ * Main pagination entry point — called by the renderer's onScroll callback.
+ * Determines which PAGE_SIZE chunk covers the visible area (+ prefetch),
+ * skips chunks already loaded, and fetches from Firestore if needed.
+ */
+async function loadVisibleRows(firstRow) {
+  const sync = window.GRFirebaseInit?.getSync?.();
+  if (!sync || !sync.isSignedIn) return; // no Firestore — nothing to do
+
+  const targetRow = firstRow + PREFETCH;
+  const chunkStart = _chunkIndex(targetRow) * PAGE_SIZE;
+
+  // Skip if this chunk is already in memory
+  if (_isChunkLoaded(App.sheetName, chunkStart)) return;
+
+  // Mark immediately to prevent concurrent duplicate fetches for the same chunk
+  _markChunkLoaded(App.sheetName, chunkStart);
+
+  try {
+    const rows = await sync.loadRows(
+      App.branchId,
+      App.sheetName,
+      chunkStart,
+      Math.min(chunkStart + PAGE_SIZE - 1, 49_999)
+    );
+
+    if (!rows || rows.length === 0) return;
+
+    // Load into main-thread workbook
+    const sheet = App.workbook.getSheet(App.sheetName);
+    rows.forEach(({ rowIndex, data }) => sheet.loadRow(rowIndex, data));
+
+    // Sync to worker
+    if (App.worker && App.workerAvailable) {
+      App.worker.send('LOAD_ROWS', {
+        branchId: App.branchId,
+        sheetName: App.sheetName,
+        rows,
+      }).catch(e => console.warn('[Pagination] worker sync failed:', e));
+    }
+
+    // Update draft cache and re-render the newly loaded rows
+    const loadedIndices = rows.map(r => r.rowIndex);
+    markRowsDirtyForDraft(loadedIndices);
+    refreshRows(new Set(loadedIndices));
+
+  } catch (err) {
+    // Un-mark the chunk on failure so it can be retried on the next scroll
+    const key = `${App.branchId}_${App.sheetName}`;
+    _loadedChunks[key]?.delete(_chunkIndex(chunkStart));
+    console.warn('[Pagination] Firestore load failed:', err);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CELL INTERACTION
+═══════════════════════════════════════════════════════════════ */
+function onCellClick({ row, col, colId }) {
+  const colDef = App.workbook.getSheet(App.sheetName).getColumnByIndex(col);
+  if (!colDef) return;
+
+  // Update formula bar
+  const colLetter = colIndexToLetter(col);
+  document.getElementById('cellRef').textContent = `${colLetter}${row + 1}`;
+  document.getElementById('sb-row').textContent = row + 1;
+  document.getElementById('sb-col').textContent = colLetter;
+
+  const val = App.workbook.getSheet(App.sheetName).displayValue(row, colId);
+  document.getElementById('formulaInput').value = val ?? '';
+
+  App.activeCell = { row, col, colId };
+}
+
+function onCellDblClick({ row, col, colId, event }) {
+  openCellEditor(row, col, colId, event.target);
+}
+
+function onSelectionChange(selection) {
+  updateSelectionSummary(selection);
+}
+
+function openCellEditor(row, col, colId, targetEl) {
+  const editor = document.getElementById('cellEditor');
+  const input  = document.getElementById('cellEditorInput');
+
+  const rect = targetEl.getBoundingClientRect();
+  const vpRect = document.getElementById('cellViewport').getBoundingClientRect();
+
+  editor.style.top    = (rect.top  - vpRect.top)  + 'px';
+  editor.style.left   = (rect.left - vpRect.left)  + 'px';
+  editor.style.width  = rect.width  + 'px';
+  editor.style.height = rect.height + 'px';
+  editor.classList.add('active');
+
+  const val = App.workbook.getSheet(App.sheetName).displayValue(row, colId);
+  input.value = val ?? '';
+  input.focus();
+  input.select();
+
+  // Check for validation dropdown
+  const { ValidationRegistry } = self.GREngine;
+
+  input.onkeydown = (e) => {
+    if (e.key === 'Enter' || e.key === 'Tab') {
+      commitCellEdit(row, colId, input.value);
+      closeCellEditor();
+      e.preventDefault();
+    } else if (e.key === 'Escape') {
+      closeCellEditor();
+    }
+  };
+
+  input.oninput = () => {
+    document.getElementById('formulaInput').value = input.value;
+  };
+
+  input.onblur = () => {
+    setTimeout(() => {
+      if (!document.activeElement?.closest?.('#cellDropdown')) {
+        commitCellEdit(row, colId, input.value);
+        closeCellEditor();
+      }
+    }, 150);
+  };
+}
+
+function closeCellEditor() {
+  document.getElementById('cellEditor').classList.remove('active');
+  document.getElementById('cellDropdown').classList.remove('open');
+}
+
+async function commitCellEdit(row, colId, value) {
+  const sheet = App.workbook.getSheet(App.sheetName);
+  const col = sheet.getColumnById(colId);
+  if (!col) return;
+
+  // Capture "before" value for undo BEFORE the write
+  const before = sheet.displayValue(row, colId);
+
+  // Manual override — applied immediately for instant UI feedback
+  sheet.setCell(row, colId, value, true);
+  refreshRows([row]); // optimistic repaint
+
+  // Track for undo
+  pushUndo({ type: 'cell', sheetName: App.sheetName, row, colId, before, after: value });
+
+  // Recalc off the main thread via worker
+  const affectedRows = await recalcViaWorker(() =>
+    App.worker.send('SET_CELL', {
+      branchId: App.branchId, sheetName: App.sheetName,
+      row, colId, value, isManual: true,
+    })
+  );
+  refreshRows(affectedRows);
+
+  scheduleDraft(affectedRows ?? [row]);
+  logActivity('EDIT_CELL', { row, colId, value: String(value).slice(0, 80) });
+}
+
+function updateSelectionSummary(selection) {
+  const range = App.renderer.getSelectedRange();
+  if (!range || (range.startRow === range.endRow && range.startCol === range.endCol)) {
+    document.getElementById('selectionSummary').style.display = 'none';
+    return;
+  }
+  const sheet = App.workbook.getSheet(App.sheetName);
+  let sum = 0, count = 0, numCount = 0;
+  for (let r = range.startRow; r <= range.endRow; r++) {
+    for (let c = range.startCol; c <= range.endCol; c++) {
+      const colDef = sheet.getColumnByIndex(c);
+      if (!colDef) continue;
+      const val = sheet.displayValue(r, colDef.id);
+      if (val !== null) {
+        count++;
+        const n = parseFloat(val);
+        if (!isNaN(n)) { sum += n; numCount++; }
+      }
+    }
+  }
+  const avg = numCount > 0 ? (sum / numCount) : 0;
+  document.getElementById('sb-sum').textContent   = sum.toFixed(2);
+  document.getElementById('sb-avg').textContent   = avg.toFixed(2);
+  document.getElementById('sb-count').textContent = count;
+  document.getElementById('selectionSummary').style.display = 'flex';
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   COLUMN MANAGEMENT
+═══════════════════════════════════════════════════════════════ */
+let _editingColId = null;
+
+function openColumnSettings(colId) {
+  _editingColId = colId;
+  const sheet = App.workbook.getSheet(App.sheetName);
+
+  // Clear all formula builder fields to prevent stale-state leakage
+  const arithExpr = document.getElementById('fb-arithmetic-expr');
+  if (arithExpr) arithExpr.value = '';
+  document.getElementById('colDepWarning').classList.remove('visible');
+  document.getElementById('colDepList').textContent = '';
+
+  if (colId) {
+    const col = sheet.getColumnById(colId);
+    if (!col) { _editingColId = null; return; }
+    document.getElementById('col-name').value      = col.name;
+    document.getElementById('col-type').value      = col.type;
+    document.getElementById('col-width').value     = col.width;
+    document.getElementById('col-frozen').value    = col.frozen ? '1' : '0';
+    document.getElementById('col-decimals').value  = col.format?.decimals ?? 2;
+    document.getElementById('col-currency').value  = col.format?.currency ?? 'EUR';
+    document.getElementById('col-thousands').value = col.format?.thousands === false ? '0' : '1';
+    document.getElementById('deleteColBtn').style.display = 'flex';
+    onColTypeChange();
+
+    // Populate pickers first, then load the stored formulaDef
+    populateFormulaColPickers();
+    selectFormulaType(col.formulaType || 'none', null);
+    if (col.formulaType && col.formulaType !== 'none') {
+      loadFormulaDef(col.formulaType, col.formulaDef);
+    }
+  } else {
+    document.getElementById('col-name').value      = '';
+    document.getElementById('col-type').value      = 'text';
+    document.getElementById('col-width').value     = '130';
+    document.getElementById('col-frozen').value    = '0';
+    document.getElementById('col-decimals').value  = '2';
+    document.getElementById('col-currency').value  = 'EUR';
+    document.getElementById('col-thousands').value = '1';
+    document.getElementById('deleteColBtn').style.display = 'none';
+    document.getElementById('formatSection').style.display = 'none';
+
+    // Populate pickers then reset to "no formula"
+    populateFormulaColPickers();
+    selectFormulaType('none', null);
+  }
+  openModal('colModal');
+}
+
+/* ─── Column name ↔ ID mapping for formula builders ─── */
+/**
+ * Converts user-visible expression (with column names) to internal
+ * expression with column IDs, suitable for storing in formulaDef.
+ * Example: "[الكمية] × [سعر الوحدة]" → "#{colId1} * #{colId2}"
+ */
+function _exprToInternal(exprWithNames, cols) {
+  let expr = exprWithNames;
+  cols.forEach(c => {
+    // Replace [اسم العمود] with #{colId}, also replace × ÷ with * /
+    expr = expr.split(`[${c.name}]`).join(`#{${c.id}}`);
+  });
+  expr = expr.replace(/×/g, '*').replace(/÷/g, '/');
+  return expr;
+}
+
+/**
+ * Converts internal expression (with column IDs) back to user-visible
+ * expression (with column names) for display in the builder.
+ * Example: "#{colId1} * #{colId2}" → "[الكمية] × [سعر الوحدة]"
+ */
+function _exprToDisplay(internalExpr, cols) {
+  if (!internalExpr) return '';
+  let expr = internalExpr;
+  cols.forEach(c => {
+    expr = expr.split(`#{${c.id}}`).join(`[${c.name}]`);
+  });
+  expr = expr.replace(/\*/g, '×').replace(/\//g, '÷');
+  return expr;
+}
+
+function populateFormulaColPickers() {
+  const sheet = App.workbook.getSheet(App.sheetName);
+  const cols  = sheet.columns.filter(c => c.id !== _editingColId);
+
+  /* ── Arithmetic chips — show column NAMES, not IDs ── */
+  const container = document.getElementById('fb-arithmetic-cols');
+  container.innerHTML = '';
+  cols.forEach(c => {
+    const chip = document.createElement('button');
+    chip.className   = 'fb-col-chip';
+    chip.textContent = c.name;
+    chip.title       = `انقر لإضافة "${c.name}" للمعادلة`;
+    chip.onclick = () => {
+      const expr = document.getElementById('fb-arithmetic-expr');
+      expr.value += `[${c.name}]`;
+      updateFormulaPreview();
+    };
+    container.appendChild(chip);
+  });
+
+  /* ── Lookup selects — current sheet key ── */
+  const lookupKey = document.getElementById('fb-lookup-key');
+  if (lookupKey) {
+    lookupKey.innerHTML = cols.map(c =>
+      `<option value="${c.id}">${c.name}</option>`
+    ).join('');
+  }
+
+  /* ── Discount selects ── */
+  ['fb-disc-total','fb-disc-amount'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (sel) sel.innerHTML = cols.map(c =>
+      `<option value="${c.id}">${c.name}</option>`
+    ).join('');
+  });
+
+  /* ── Conditional column select ── */
+  const condCol = document.getElementById('fb-cond-col');
+  if (condCol) {
+    condCol.innerHTML = cols.map(c =>
+      `<option value="${c.id}">${c.name}</option>`
+    ).join('');
+  }
+
+  /* ── Refresh lookup source cols with current sheet selection ── */
+  refreshLookupCols();
+}
+
+function refreshLookupCols() {
+  const srcSheet = document.getElementById('fb-lookup-src-sheet')?.value;
+  if (!srcSheet) return;
+  const sheet = App.workbook.getSheet(srcSheet);
+  const cols  = sheet?.columns ?? [];
+  const opts  = cols.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+  ['fb-lookup-src-key','fb-lookup-value'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (sel) sel.innerHTML = opts || '<option value="">— لا توجد أعمدة —</option>';
+  });
+  updateFormulaPreview();
+}
+
+function selectFormulaType(type, labelEl) {
+  /* Highlight selected radio option */
+  document.querySelectorAll('#formulaTypeGroup .radio-opt').forEach(el => el.classList.remove('selected'));
+  if (labelEl) {
+    labelEl.classList.add('selected');
+  } else {
+    const found = [...document.querySelectorAll('#formulaTypeGroup .radio-opt')]
+      .find(el => el.querySelector('input')?.value === type);
+    if (found) found.classList.add('selected');
+  }
+
+  /* Hide all builders */
+  ['fb-arithmetic','fb-lookup','fb-conditional','fb-discount'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  const wrap    = document.getElementById('formulaBuilderWrap');
+  const preview = document.getElementById('formulaPreview');
+
+  if (type === 'none') {
+    wrap.style.display    = 'none';
+    preview.style.display = 'none';
+  } else {
+    wrap.style.display    = 'block';
+    preview.style.display = 'block';
+    const builderMap = {
+      arithmetic:  'fb-arithmetic',
+      lookup:      'fb-lookup',
+      conditional: 'fb-conditional',
+      discount:    'fb-discount',
+    };
+    const builderId = builderMap[type];
+    if (builderId) {
+      const el = document.getElementById(builderId);
+      if (el) el.style.display = 'block';
+    }
+  }
+  updateFormulaPreview();
+}
+
+function insertArithOp(op) {
+  const input = document.getElementById('fb-arithmetic-expr');
+  if (!input) return;
+  // Insert at cursor position if possible
+  const start = input.selectionStart ?? input.value.length;
+  const end   = input.selectionEnd   ?? input.value.length;
+  input.value = input.value.slice(0, start) + op + input.value.slice(end);
+  const pos = start + op.length;
+  input.setSelectionRange(pos, pos);
+  input.focus();
+  updateFormulaPreview();
+}
+
+function clearArithExpr() {
+  const input = document.getElementById('fb-arithmetic-expr');
+  if (input) { input.value = ''; input.focus(); }
+  updateFormulaPreview();
+}
+
+function updateCondPreview() {
+  const sheet   = App.workbook.getSheet(App.sheetName);
+  const colId   = document.getElementById('fb-cond-col')?.value;
+  const op      = document.getElementById('fb-cond-op')?.value ?? '>';
+  const val     = document.getElementById('fb-cond-val')?.value ?? '0';
+  const trueV   = document.getElementById('fb-cond-true')?.value  || '...';
+  const falseV  = document.getElementById('fb-cond-false')?.value || '...';
+  const colName = (colId ? sheet.getColumnById(colId)?.name : null) ?? 'العمود';
+  const opLabel = {'>':'أكبر من','>=':'أكبر من أو يساوي','<':'أصغر من','<=':'أصغر من أو يساوي','==':'يساوي','!=':'لا يساوي'}[op] ?? op;
+  const preview = document.getElementById('fb-cond-preview');
+  if (preview) {
+    preview.textContent = `إذا كان "${colName}" ${opLabel} ${val} → أعطِ "${trueV}" ، وإلا أعطِ "${falseV}"`;
+  }
+}
+
+function updateFormulaPreview() {
+  const type    = document.querySelector('#formulaTypeGroup .selected input')?.value ?? 'none';
+  const sheet   = App.workbook.getSheet(App.sheetName);
+  const preview = document.getElementById('formulaPreview');
+  if (!preview) return;
+
+  let text = '';
+
+  if (type === 'none') {
+    preview.style.display = 'none';
+    return;
+  }
+
+  preview.style.display = 'block';
+
+  if (type === 'arithmetic') {
+    const raw = document.getElementById('fb-arithmetic-expr')?.value ?? '';
+    text = raw ? `الحساب: ${raw}` : 'اختر الأعمدة واكتب المعادلة أعلاه';
+
+  } else if (type === 'lookup') {
+    const keyColId = document.getElementById('fb-lookup-key')?.value;
+    const srcSheet = document.getElementById('fb-lookup-src-sheet')?.value ?? '—';
+    const srcKeyId = document.getElementById('fb-lookup-src-key')?.value;
+    const valId    = document.getElementById('fb-lookup-value')?.value;
+    const keyName  = (keyColId ? sheet.getColumnById(keyColId)?.name : null) ?? '—';
+    const srcKeyName = srcKeyId
+      ? (App.workbook.getSheet(srcSheet)?.getColumnById(srcKeyId)?.name ?? srcKeyId)
+      : '—';
+    const valName  = valId
+      ? (App.workbook.getSheet(srcSheet)?.getColumnById(valId)?.name ?? valId)
+      : '—';
+    text = `ابحث عن "${keyName}" في شيت "${srcSheet}" (عمود "${srcKeyName}") → أحضر "${valName}"`;
+
+  } else if (type === 'conditional') {
+    updateCondPreview();
+    text = document.getElementById('fb-cond-preview')?.textContent ?? '';
+
+  } else if (type === 'discount') {
+    const totalId   = document.getElementById('fb-disc-total')?.value;
+    const amountId  = document.getElementById('fb-disc-amount')?.value;
+    const totalName = (totalId  ? sheet.getColumnById(totalId)?.name  : null) ?? '—';
+    const amtName   = (amountId ? sheet.getColumnById(amountId)?.name : null) ?? '—';
+    const mode      = document.querySelector('[name="dmode"]:checked')?.value ?? 'new_price';
+    const modeLabel = {
+      new_price:           'اعرض السعر النهائي بعد الخصم',
+      share:               'اعرض حصة هذا الصنف من الخصم',
+      invoice_total_after: 'اعرض إجمالي الفاتورة بعد الخصم',
+    }[mode] ?? mode;
+    text = `وزّع خصم "${amtName}" على الأصناف بنسبة "${totalName}" — ${modeLabel}`;
+  }
+
+  preview.textContent = text;
+}
+
+function selectDiscMode(mode, el) {
+  document.querySelectorAll('[name="dmode"]').forEach(r => {
+    r.closest('.radio-opt')?.classList.remove('selected');
+  });
+  el?.classList?.add('selected');
+  updateFormulaPreview();
+}
+
+/* ─── Insert/extract formula for save/load ─── */
+
+/**
+ * Build the formulaDef object from the current UI state.
+ * Converts user-visible column names back to internal IDs before storing.
+ */
+function buildFormulaDef(type) {
+  const sheet = App.workbook.getSheet(App.sheetName);
+  const cols  = sheet.columns.filter(c => c.id !== _editingColId);
+
+  if (type === 'arithmetic') {
+    const displayExpr = document.getElementById('fb-arithmetic-expr')?.value ?? '';
+    return { expression: _exprToInternal(displayExpr, cols) };
+  }
+
+  if (type === 'lookup') {
+    return {
+      keyColId:      document.getElementById('fb-lookup-key')?.value,
+      valueSheetName:document.getElementById('fb-lookup-src-sheet')?.value,
+      sourceKeyColId:document.getElementById('fb-lookup-src-key')?.value,
+      valueColId:    document.getElementById('fb-lookup-value')?.value,
+    };
+  }
+
+  if (type === 'conditional') {
+    const colId  = document.getElementById('fb-cond-col')?.value;
+    const op     = document.getElementById('fb-cond-op')?.value ?? '>';
+    const val    = document.getElementById('fb-cond-val')?.value ?? '0';
+    const trueV  = document.getElementById('fb-cond-true')?.value  ?? '';
+    const falseV = document.getElementById('fb-cond-false')?.value ?? '';
+    // Build an expression-based condition using the internal colId
+    const test      = `#{${colId}} ${op} ${parseFloat(val) || val}`;
+    const trueExpr  = isNaN(trueV)  ? `"${trueV}"`  : trueV;
+    const falseExpr = isNaN(falseV) ? `"${falseV}"` : falseV;
+    return { conditions: [{ test, trueExpr, falseExpr }] };
+  }
+
+  if (type === 'discount') {
+    return {
+      itemTotalColId: document.getElementById('fb-disc-total')?.value,
+      discountColId:  document.getElementById('fb-disc-amount')?.value,
+      outputMode:     document.querySelector('[name="dmode"]:checked')?.value ?? 'new_price',
+    };
+  }
+
+  return {};
+}
+
+/**
+ * Populate the formula builder UI from a stored formulaDef.
+ * Converts internal IDs back to user-visible names.
+ */
+function loadFormulaDef(type, formulaDef) {
+  if (!formulaDef) return;
+  const sheet = App.workbook.getSheet(App.sheetName);
+  const cols  = sheet.columns;
+
+  if (type === 'arithmetic' && formulaDef.expression) {
+    const displayExpr = _exprToDisplay(formulaDef.expression, cols);
+    const input = document.getElementById('fb-arithmetic-expr');
+    if (input) input.value = displayExpr;
+  }
+
+  if (type === 'lookup') {
+    const setVal = (id, val) => { const el=document.getElementById(id); if(el&&val) el.value=val; };
+    setVal('fb-lookup-key',      formulaDef.keyColId);
+    setVal('fb-lookup-src-sheet',formulaDef.valueSheetName);
+    refreshLookupCols();
+    // Delay to let refreshLookupCols render options first
+    setTimeout(() => {
+      setVal('fb-lookup-src-key', formulaDef.sourceKeyColId);
+      setVal('fb-lookup-value',   formulaDef.valueColId);
+      updateFormulaPreview();
+    }, 50);
+  }
+
+  if (type === 'conditional' && formulaDef.conditions?.length) {
+    const cond = formulaDef.conditions[0];
+    // Try to parse test expression: #{colId} op value
+    const match = (cond.test ?? '').match(/#\{([^}]+)\}\s*([><=!]+)\s*(.+)/);
+    if (match) {
+      const [,colId, op, val] = match;
+      const el = document.getElementById('fb-cond-col');
+      if (el) el.value = colId;
+      const opEl = document.getElementById('fb-cond-op');
+      if (opEl) opEl.value = op.trim();
+      const valEl = document.getElementById('fb-cond-val');
+      if (valEl) valEl.value = val.trim();
+    }
+    const trueEl  = document.getElementById('fb-cond-true');
+    const falseEl = document.getElementById('fb-cond-false');
+    if (trueEl)  trueEl.value  = (cond.trueExpr  ?? '').replace(/^"|"$/g,'');
+    if (falseEl) falseEl.value = (cond.falseExpr ?? '').replace(/^"|"$/g,'');
+    updateCondPreview();
+  }
+
+  if (type === 'discount') {
+    const setVal = (id, val) => { const el=document.getElementById(id); if(el&&val) el.value=val; };
+    setVal('fb-disc-total',  formulaDef.itemTotalColId);
+    setVal('fb-disc-amount', formulaDef.discountColId);
+    const mode = formulaDef.outputMode ?? 'new_price';
+    document.querySelectorAll('[name="dmode"]').forEach(r => {
+      r.checked = r.value === mode;
+      const opt = r.closest('.radio-opt');
+      if (opt) opt.classList.toggle('selected', r.value === mode);
+    });
+  }
+}
+
+function onColTypeChange() {
+  const type = document.getElementById('col-type').value;
+  const show  = ['number','currency','percentage'].includes(type);
+  document.getElementById('formatSection').style.display = show ? 'block' : 'none';
+  document.getElementById('currencySection').style.display = type === 'currency' ? 'block' : 'none';
+}
+
+async function saveColumn() {
+  const name   = document.getElementById('col-name').value.trim();
+  const type   = document.getElementById('col-type').value;
+  const width  = parseInt(document.getElementById('col-width').value) || 130;
+  const frozen = document.getElementById('col-frozen').value === '1';
+  const ftype  = document.querySelector('#formulaTypeGroup .selected input')?.value ?? 'none';
+
+  if (!name) { showHoloWarning('اسم العمود مطلوب'); return; }
+
+  const sheet = App.workbook.getSheet(App.sheetName);
+
+  // Use buildFormulaDef which properly converts user-visible column names
+  // back to internal IDs before storing
+  const formulaDef = buildFormulaDef(ftype);
+
+  const format = {
+    decimals:  parseInt(document.getElementById('col-decimals').value) || 2,
+    currency:  document.getElementById('col-currency').value,
+    thousands: document.getElementById('col-thousands').value === '1',
+  };
+
+  const { COL_TYPES, FORMULA_TYPES } = self.GREngine;
+
+  const def = { name, type, width, frozen, formulaType: ftype, formulaDef, format };
+
+  // Capture this BEFORE closeModal() resets _editingColId, otherwise both
+  // the success toast and activity log below would always report "create"
+  // even when an existing column was actually being edited.
+  const wasEditing = !!(_editingColId && sheet.getColumnById(_editingColId));
+
+  if (wasEditing) {
+    sheet.updateColumn(_editingColId, def);
+  } else {
+    sheet.addColumn(def);
+  }
+
+  // Full recalc — mirror the updated column structure to the worker first
+  // (LOAD_COLUMNS replaces its column array wholesale, avoiding any risk
+  // of ID mismatch from separately replaying add/update calls), then let
+  // the worker recompute every formula across the sheet.
+  await fullRecalcViaWorker(async () => {
+    await App.worker.send('LOAD_COLUMNS', {
+      branchId: App.branchId, sheetName: App.sheetName, columns: sheet.columns,
+    });
+    return App.worker.send('FULL_RECALC', { branchId: App.branchId });
+  });
+
+  // Refresh renderer
+  App.renderer.setSheet({ totalRows: 50_000, columns: sheet.columns });
+  refreshViewport();
+  document.getElementById('sb-colcount').textContent = sheet.columns.length;
+
+  closeModal('colModal');
+  rebuildDraftCache();
+  scheduleDraft();
+  logActivity(wasEditing ? 'UPDATE_COLUMN' : 'ADD_COLUMN', { name, type, formulaType: ftype });
+  showToast(`تم ${wasEditing ? 'تعديل' : 'إنشاء'} العمود: ${name}`, 'success');
+}
+
+async function deleteColumn() {
+  if (!_editingColId) return;
+  const sheet = App.workbook.getSheet(App.sheetName);
+  const col = sheet.getColumnById(_editingColId);
+  const colName = col?.name ?? 'عمود';
+  if (!col) return;
+
+  // Check dependents BEFORE removing anything — removeColumn() itself
+  // always performs the removal regardless of dependents, so we must
+  // decide here whether to proceed.
+  const dependents = sheet.getColumnDependents(_editingColId);
+  if (dependents.length > 0) {
+    const names = dependents.map(id => sheet.getColumnById(id)?.name ?? id).join('، ');
+    document.getElementById('colDepWarning').classList.add('visible');
+    document.getElementById('colDepList').textContent = names;
+    return; // nothing was removed — data model and UI remain consistent
+  }
+
+  const { removed } = sheet.removeColumn(_editingColId);
+  if (!removed) return;
+
+  // Mirror the column structure to the worker and recompute
+  await fullRecalcViaWorker(async () => {
+    await App.worker.send('LOAD_COLUMNS', {
+      branchId: App.branchId, sheetName: App.sheetName, columns: sheet.columns,
+    });
+    return App.worker.send('FULL_RECALC', { branchId: App.branchId });
+  });
+
+  App.renderer.setSheet({ totalRows: 50_000, columns: sheet.columns });
+  refreshViewport();
+  document.getElementById('sb-colcount').textContent = sheet.columns.length;
+  closeModal('colModal');
+  rebuildDraftCache();
+  scheduleDraft();
+  logActivity('REMOVE_COLUMN', { name: colName });
+  showToast(`تم حذف العمود: ${colName}`, 'warn');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DATA VALIDATION
+═══════════════════════════════════════════════════════════════ */
+function selectValidType(type, el) {
+  document.querySelectorAll('#validTypeGroup .radio-opt').forEach(e => e.classList.remove('selected'));
+  el?.classList?.add('selected');
+  document.getElementById('valid-list-opts').style.display  = type === 'list_range'   ? 'block' : 'none';
+  document.getElementById('valid-range-opts').style.display = type === 'number_range' ? 'block' : 'none';
+}
+
+function openModal(id) {
+  if (id === 'validModal') {
+    const sheet = App.workbook.getSheet(App.sheetName);
+    const sel = document.getElementById('valid-col');
+    sel.innerHTML = sheet.columns.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+  }
+  document.getElementById(id).classList.add('open');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  // Clear dep warning + editing state for column modal
+  if (id === 'colModal') {
+    document.getElementById('colDepWarning').classList.remove('visible');
+    _editingColId = null;
+  }
+}
+
+function saveValidation() {
+  showToast('تم حفظ إعدادات التحقق', 'success');
+  closeModal('validModal');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   INSERT LINK
+═══════════════════════════════════════════════════════════════ */
+function openLinkModal() {
+  const cell = App.activeCell;
+  if (!cell) { showHoloWarning('حدد خلية أولاً'); return; }
+  document.getElementById('link-cell-ref').textContent = `${colIndexToLetter(cell.col)}${cell.row + 1}`;
+  const existing = App.workbook.getSheet(App.sheetName).getCell(cell.row, cell.colId);
+  document.getElementById('link-url').value = existing?.lnk ?? '';
+  openModal('linkModal');
+}
+
+function saveLink() {
+  const cell = App.activeCell;
+  if (!cell) return;
+  const url = document.getElementById('link-url').value.trim();
+  App.workbook.getSheet(App.sheetName).setCellLink(cell.row, cell.colId, url);
+  refreshRows([cell.row]);
+  scheduleDraft([cell.row]);
+  logActivity('SET_LINK', { row: cell.row, colId: cell.colId, url });
+  closeModal('linkModal');
+  showToast('تم إدراج الرابط', 'success');
+}
+
+function removeLink() {
+  const cell = App.activeCell;
+  if (!cell) return;
+  App.workbook.getSheet(App.sheetName).setCellLink(cell.row, cell.colId, null);
+  refreshRows([cell.row]);
+  scheduleDraft([cell.row]);
+  logActivity('REMOVE_LINK', { row: cell.row, colId: cell.colId });
+  closeModal('linkModal');
+  showToast('تم إزالة الرابط', 'info');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   INVOICE MANAGEMENT
+═══════════════════════════════════════════════════════════════ */
+async function closeInvoice() {
+  const sel = App.renderer.getSelectedRange();
+  const lastRow = sel ? sel.endRow : (App.workbook.getSheet('Purchases').maxRow);
+  const sheet = App.workbook.getSheet('Purchases');
+  sheet.closeInvoice(lastRow);
+  const boundaries = [...sheet.invoiceBoundaries];
+
+  // CLOSE_INVOICE already performs fullRecalc inside the worker and
+  // returns the serialized updated map — no separate FULL_RECALC needed.
+  await fullRecalcViaWorker(() =>
+    App.worker.send('CLOSE_INVOICE', {
+      branchId: App.branchId, lastRow,
+    })
+  );
+
+  App.renderer.setInvoiceBoundaries(boundaries);
+  refreshViewport();
+  showToast(`تم إنهاء الفاتورة عند الصف ${lastRow + 1}`, 'success');
+  rebuildDraftCache();
+  scheduleDraft();
+  logActivity('CLOSE_INVOICE', { lastRow });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FIND & REPLACE
+═══════════════════════════════════════════════════════════════ */
+let _findResults = [];
+let _findCursor  = -1;
+let _findEngine  = null;
+
+function toggleFindPanel() {
+  document.getElementById('findPanel').classList.toggle('open');
+  if (document.getElementById('findPanel').classList.contains('open')) {
+    document.getElementById('findInput').focus();
+  }
+}
+
+function toggleFindOpt(opt) {
+  App.findOpts[opt] = !App.findOpts[opt];
+  document.getElementById(`opt-${opt}`).classList.toggle('on', App.findOpts[opt]);
+  onFindInput();
+}
+
+function onFindInput() {
+  const query = document.getElementById('findInput').value;
+  if (!query) { document.getElementById('findCount').textContent = '—'; return; }
+
+  const sheet = App.workbook.getSheet(App.sheetName);
+  const { FindReplace } = self.GREngine;
+  _findEngine = new FindReplace(sheet);
+
+  const count = _findEngine.find(query, {
+    exact:         App.findOpts.exact,
+    caseSensitive: App.findOpts.case,
+  });
+
+  _findResults = _findEngine.results();
+  _findCursor  = _findResults.length > 0 ? 0 : -1;
+  document.getElementById('findCount').textContent = count > 0 ? `${_findCursor + 1} / ${count}` : 'لا نتائج';
+  if (_findResults.length > 0) scrollToFindResult(0);
+}
+
+function findNext() {
+  if (!_findResults.length) return;
+  _findCursor = (_findCursor + 1) % _findResults.length;
+  scrollToFindResult(_findCursor);
+}
+
+function findPrev() {
+  if (!_findResults.length) return;
+  _findCursor = (_findCursor - 1 + _findResults.length) % _findResults.length;
+  scrollToFindResult(_findCursor);
+}
+
+function scrollToFindResult(idx) {
+  const hit = _findResults[idx];
+  if (!hit) return;
+  const sheet = App.workbook.getSheet(App.sheetName);
+  const colIdx = sheet.columns.findIndex(c => c.id === hit.colId);
+  App.renderer.scrollToCell(hit.row, colIdx);
+  App.renderer.selectCell(hit.row, colIdx);
+  document.getElementById('findCount').textContent = `${idx + 1} / ${_findResults.length}`;
+}
+
+async function replaceCurrent() {
+  if (!_findEngine || _findCursor < 0) return;
+  const rep = document.getElementById('replaceInput').value;
+  _findEngine._cursor = _findCursor;
+  const hit = _findEngine.results()[_findCursor];
+  if (!hit) return;
+
+  _findEngine.replaceCurrent(rep);
+
+  // Read the actual final stored value (handles type coercion edge cases)
+  const sheet = App.workbook.getSheet(App.sheetName);
+  const actualValue = sheet.displayValue(hit.row, hit.colId) ?? rep;
+
+  const affectedRows = await recalcViaWorker(() =>
+    App.worker.send('SET_CELL', {
+      branchId: App.branchId, sheetName: App.sheetName,
+      row: hit.row, colId: hit.colId, value: actualValue, isManual: true,
+    })
+  );
+  refreshRows(affectedRows);
+  scheduleDraft(affectedRows ?? []);
+  onFindInput();
+}
+
+async function replaceAll() {
+  if (!_findEngine) return;
+  const query = document.getElementById('findInput').value;
+  const rep   = document.getElementById('replaceInput').value;
+
+  // Run the replacement on the main-thread workbook first
+  const count = _findEngine.replaceAll(query, rep, {
+    exact:         App.findOpts.exact,
+    caseSensitive: App.findOpts.case,
+  });
+
+  if (count === 0) {
+    showToast('لا توجد نتائج للاستبدال', 'info');
+    return;
+  }
+
+  // Collect the unique rows that were modified so we can mirror them
+  const touchedRows = new Set(_findEngine.results().map(r => r.row));
+
+  // Serialize the affected rows (using the same {v,m,lnk} shape that
+  // LOAD_ROWS expects) and send them in a single batched message to the
+  // worker — far more efficient than one SET_CELL per cell.
+  const sheet = App.workbook.getSheet(App.sheetName);
+  const rowsPayload = [];
+  for (const row of touchedRows) {
+    const data = sheet.serializeRow(row);
+    if (data) rowsPayload.push({ rowIndex: row, data });
+  }
+
+  const affectedRows = await recalcViaWorker(async () => {
+    if (rowsPayload.length) {
+      await App.worker.send('LOAD_ROWS', {
+        branchId: App.branchId, sheetName: App.sheetName, rows: rowsPayload,
+      });
+    }
+    return App.worker.send('FULL_RECALC', { branchId: App.branchId });
+  });
+
+  refreshRows(affectedRows);
+  scheduleDraft(affectedRows ?? [...touchedRows]);
+  logActivity('REPLACE_ALL', { query, replacement: rep, count });
+  showToast(`تم الاستبدال في ${count} خلية`, 'success');
+  onFindInput();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FREEZE PANES
+═══════════════════════════════════════════════════════════════ */
+function toggleFreeze() {
+  const sel = App.renderer.selection;
+  if (!sel.anchor) return;
+  App.frozenRows = sel.anchor.row;
+  App.frozenCols = sel.anchor.col;
+  const sheet = App.workbook.getSheet(App.sheetName);
+  App.renderer.setSheet({
+    totalRows: 50_000,
+    columns:   sheet.columns,
+    frozenRows: App.frozenRows,
+    frozenCols: App.frozenCols,
+  });
+  showToast(`تجميد عند الصف ${App.frozenRows + 1}، العمود ${colIndexToLetter(App.frozenCols)}`, 'info');
+}
+
+function selectAll() {
+  App.renderer.selectCell(0, 0);
+  App.renderer.selection.focus = {
+    row: App.workbook.getSheet(App.sheetName).maxRow,
+    col: App.workbook.getSheet(App.sheetName).columns.length - 1,
+  };
+  App.renderer._renderSelection?.();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   IMPORT / EXPORT
+═══════════════════════════════════════════════════════════════ */
+function importExcel() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.xlsx,.xls,.csv,.txt';
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    showToast('جارٍ معالجة الملف...', 'info');
+    // Parse with SheetJS (loaded separately)
+    if (typeof XLSX !== 'undefined') {
+      const reader = new FileReader();
+      reader.onload = async (ev) => {
+        const wb  = XLSX.read(ev.target.result, { type: 'array' });
+        const ws  = wb.Sheets[wb.SheetNames[0]];
+        const tsv = XLSX.utils.sheet_to_csv(ws, { FS: '\t' });
+        const { ClipboardParser } = self.GREngine;
+        const grid  = ClipboardParser.parse(tsv);
+        const sheet = App.workbook.getSheet(App.sheetName);
+        const { written, errors } = sheet.pasteGrid(0, 0, grid);
+
+        // Mirror the paste to the worker and let it run the full recalc
+        // off the main thread. PASTE_GRID is the most efficient path here
+        // since it sends the raw TSV in one message and handles both the
+        // paste and the recalc atomically on the worker side.
+        await fullRecalcViaWorker(() =>
+          App.worker.send('PASTE_GRID', {
+            branchId:       App.branchId,
+            sheetName:      App.sheetName,
+            clipboardText:  tsv,
+            startRow:       0,
+            startColIndex:  0,
+          })
+        );
+
+        refreshViewport();
+        rebuildDraftCache();
+        scheduleDraft();
+        logActivity('IMPORT', { fileName: file.name, written, errorCount: errors.length });
+        showToast(`تم استيراد ${written} خلية${errors.length ? ` (${errors.length} خطأ)` : ''}`, errors.length ? 'warn' : 'success');
+      };
+      reader.readAsArrayBuffer(file);
+    } else {
+      showToast('مكتبة XLSX غير محملة — تحقق من اتصال الإنترنت', 'error');
+    }
+  };
+  input.click();
+}
+
+function exportExcel() {
+  if (typeof XLSX === 'undefined') { showToast('مكتبة XLSX غير محملة — تحقق من اتصال الإنترنت', 'error'); return; }
+  const sheet = App.workbook.getSheet(App.sheetName);
+  if (!sheet.columns.length) { showToast('لا توجد أعمدة للتصدير', 'warn'); return; }
+
+  const wb = XLSX.utils.book_new();
+
+  for (const sheetName of ['Purchases','Kasa','Barcode','Phinex']) {
+    const s = App.workbook.getSheet(sheetName);
+    const headers = s.columns.map(c => c.name);
+    const rows  = [];
+    const links = []; // [{ outputRow, col, url }] — tracked in lockstep with `rows` to stay correct after filtering empty rows
+
+    for (let r = 0; r <= s.maxRow; r++) {
+      const rowValues = [];
+      let hasData = false;
+      s.columns.forEach((c, ci) => {
+        const val = s.displayValue(r, c.id);
+        rowValues.push(val ?? '');
+        if (val !== null && val !== undefined && val !== '') hasData = true;
+
+        const cell = s.getCell(r, c.id);
+        if (cell?.lnk) {
+          // Output row index = header row (0) + however many data rows we've pushed so far.
+          // Computed lazily below once we know whether this row is kept.
+          links.push({ pendingRowPos: rows.length, col: ci, url: cell.lnk });
+        }
+      });
+      if (hasData) rows.push(rowValues);
+      else {
+        // Row was empty and will be skipped — drop any link references we
+        // just queued for it so they don't get misattributed to the next kept row.
+        while (links.length && links[links.length - 1].pendingRowPos === rows.length) links.pop();
+      }
+    }
+
+    const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+    ws['!cols'] = s.columns.map(c => ({ wch: Math.round(c.width / 7) }));
+
+    // Apply hyperlinks using the correct final row position (+1 for header row)
+    for (const { pendingRowPos, col, url } of links) {
+      const cellAddr = XLSX.utils.encode_cell({ r: pendingRowPos + 1, c: col });
+      if (ws[cellAddr]) ws[cellAddr].l = { Target: url };
+    }
+
+    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+  }
+
+  XLSX.writeFile(wb, `GR_Purchase_${App.branchId}_${Date.now()}.xlsx`);
+  logActivity('EXPORT', { format: 'xlsx', sheets: ['Purchases','Kasa','Barcode','Phinex'] });
+  showToast('تم تصدير الـ Workbook كاملاً', 'success');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SAVE / DRAFT
+═══════════════════════════════════════════════════════════════ */
+let _draftTimer = null;
+
+/* ═══════════════════════════════════════════════════════════════
+   DRAFT STORAGE — IndexedDB
+   Uses IndexedDB instead of localStorage for draft persistence.
+   localStorage has a 5-10MB quota which is easily exceeded by
+   50,000 rows of serialized cell data. IndexedDB handles hundreds
+   of MBs and is asynchronous, so it never blocks the UI thread.
+   Falls back to localStorage if IndexedDB is unavailable.
+═══════════════════════════════════════════════════════════════ */
+const _DB_NAME    = 'gr_purchase_drafts';
+const _DB_VERSION = 1;
+const _DB_STORE   = 'drafts';
+
+/** Cached IDBDatabase handle — null until first use */
+let _idb = null;
+
+/**
+ * Open (or return cached) IndexedDB connection.
+ * @returns {Promise<IDBDatabase>}
+ */
+function _openIDB() {
+  if (_idb) return Promise.resolve(_idb);
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(_DB_NAME, _DB_VERSION);
+    req.onupgradeneeded = e => {
+      e.target.result.createObjectStore(_DB_STORE);
+    };
+    req.onsuccess = e => { _idb = e.target.result; resolve(_idb); };
+    req.onerror   = ()  => reject(req.error);
+  });
+}
+
+/**
+ * Write a value to IndexedDB.
+ * @param {string} key
+ * @param {any}    value  — must be structured-cloneable (plain object/array)
+ * @returns {Promise<void>}
+ */
+async function _idbSet(key, value) {
+  const db  = await _openIDB();
+  const tx  = db.transaction(_DB_STORE, 'readwrite');
+  const req = tx.objectStore(_DB_STORE).put(value, key);
+  return new Promise((res, rej) => {
+    req.onsuccess = () => res();
+    req.onerror   = () => rej(req.error);
+  });
+}
+
+/**
+ * Read a value from IndexedDB. Returns null if the key doesn't exist.
+ * @param {string} key
+ * @returns {Promise<any|null>}
+ */
+async function _idbGet(key) {
+  const db  = await _openIDB();
+  const tx  = db.transaction(_DB_STORE, 'readonly');
+  const req = tx.objectStore(_DB_STORE).get(key);
+  return new Promise((res, rej) => {
+    req.onsuccess = () => res(req.result ?? null);
+    req.onerror   = () => rej(req.error);
+  });
+}
+
+/**
+ * Delete a key from IndexedDB.
+ * @param {string} key
+ * @returns {Promise<void>}
+ */
+async function _idbDelete(key) {
+  const db  = await _openIDB();
+  const tx  = db.transaction(_DB_STORE, 'readwrite');
+  const req = tx.objectStore(_DB_STORE).delete(key);
+  return new Promise((res, rej) => {
+    req.onsuccess = () => res();
+    req.onerror   = () => rej(req.error);
+  });
+}
+
+/* ── In-memory draft cache ── */
+
+/**
+ * In-memory draft cache: { [sheetKey]: { [rowIndex]: serializedRowData } }
+ * sheetKey = `${branchId}_${sheetName}`
+ * Patched incrementally per edit — only touched rows are added or updated.
+ * The full cache object is persisted to IndexedDB as a single structured
+ * clone on each debounced save (no JSON.stringify overhead, no quota risk).
+ */
+const _draftCache = {};
+
+function _draftKey() {
+  return `${App.branchId}_${App.sheetName}`;
+}
+
+/**
+ * Mark specific rows as needing their draft cache entry refreshed.
+ * Call after any edit, passing exactly the rows that changed.
+ */
+function markRowsDirtyForDraft(rowIndices) {
+  if (!rowIndices) return;
+  const key = _draftKey();
+  if (!_draftCache[key]) _draftCache[key] = {};
+  const sheet = App.workbook.getSheet(App.sheetName);
+  for (const row of rowIndices) {
+    const data = sheet.serializeRow(row);
+    if (data) _draftCache[key][row] = data;
+    else delete _draftCache[key][row];
+  }
+}
+
+function scheduleDraft(rowIndices) {
+  markRowsDirtyForDraft(rowIndices);
+  showDraftIndicator(true);
+  clearTimeout(_draftTimer);
+  _draftTimer = setTimeout(saveDraft, 400);
+}
+
+async function saveDraft() {
+  const key   = _draftKey();
+  const draft = _draftCache[key] ?? {};
+  const idbKey = `gr_draft_${App.branchId}_${App.sheetName}`;
+  try {
+    // Primary: IndexedDB (handles large datasets, no quota issues, async I/O)
+    await _idbSet(idbKey, draft);
+  } catch(idbErr) {
+    // Fallback: localStorage (may hit quota at 50k rows, but better than nothing)
+    try {
+      localStorage.setItem(idbKey, JSON.stringify(draft));
+    } catch(lsErr) {
+      if (!_draftWarned) {
+        _draftWarned = true;
+        showToast('تعذّر حفظ المسودة محلياً — تأكد من حفظ عملك في Firebase', 'warn');
+      }
+    }
+  }
+}
+let _draftWarned = false;
+
+/**
+ * Full rebuild of the draft cache — used after bulk operations
+ * (paste, import, column structure changes) where rebuilding once
+ * is cheaper than tracking every individual row.
+ */
+function rebuildDraftCache() {
+  const key   = _draftKey();
+  const sheet = App.workbook.getSheet(App.sheetName);
+  const draft = {};
+  for (const [row] of sheet.cells) {
+    const data = sheet.serializeRow(row);
+    if (data) draft[row] = data;
+  }
+  _draftCache[key] = draft;
+}
+
+/**
+ * Load a draft from IndexedDB (or localStorage fallback).
+ * Returns the draft object or null if none exists.
+ */
+async function loadDraft(branchId, sheetName) {
+  const idbKey = `gr_draft_${branchId}_${sheetName}`;
+  try {
+    const data = await _idbGet(idbKey);
+    if (data && typeof data === 'object') return data;
+  } catch(e) {}
+  // Fallback: try localStorage (for drafts saved by the old system)
+  try {
+    const raw = localStorage.getItem(idbKey);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      // Migrate to IndexedDB silently
+      _idbSet(idbKey, parsed).then(() => localStorage.removeItem(idbKey)).catch(() => {});
+      return parsed;
+    }
+  } catch(e) {}
+  return null;
+}
+
+/**
+ * Delete a draft from both IndexedDB and localStorage.
+ */
+async function deleteDraft(branchId, sheetName) {
+  const idbKey = `gr_draft_${branchId}_${sheetName}`;
+  try { await _idbDelete(idbKey); } catch(e) {}
+  try { localStorage.removeItem(idbKey); } catch(e) {}
+  const key = `${branchId}_${sheetName}`;
+  delete _draftCache[key];
+}
+
+async function saveToFirestore() {
+  const sync = window.GRFirebaseInit?.getSync?.();
+
+  if (!sync || !sync.isSignedIn) {
+    // No real backend connected — keep the local draft as the only copy.
+    // Do NOT delete it, since that would be actual, irreversible data loss.
+    showToast('غير متصل بـ Firebase — تم الحفظ محلياً فقط (Draft)', 'warn');
+    return;
+  }
+
+  const key  = _draftKey();
+  const draftRows = _draftCache[key] ?? {};
+  const rowEntries = Object.entries(draftRows).map(([rowIndex, data]) => ({
+    rowIndex: parseInt(rowIndex), data,
+  }));
+
+  document.getElementById('sb-status-text').textContent = 'جارٍ الحفظ...';
+
+  try {
+    const sheet = App.workbook.getSheet(App.sheetName);
+
+    // Persist rows, columns, and (for Purchases) invoice boundaries together.
+    const tasks = [];
+    if (rowEntries.length) {
+      tasks.push(sync.saveRowsBatch(App.branchId, App.sheetName, rowEntries));
+    }
+    tasks.push(sync.saveColumns(App.branchId, App.sheetName, sheet.columns));
+    if (App.sheetName === 'Purchases') {
+      tasks.push(sync.saveBoundaries(App.branchId, [...sheet.invoiceBoundaries]));
+    }
+
+    await Promise.all(tasks);
+
+    // Only clear the local draft after Firestore confirms the write succeeded.
+    await deleteDraft(App.branchId, App.sheetName);
+
+    showDraftIndicator(false);
+    document.getElementById('sb-status-text').textContent = 'جاهز';
+    logActivity('SAVE', { rowCount: rowEntries.length });
+    showToast(`تم الحفظ في Firebase — ${rowEntries.length} صف`, 'success');
+
+  } catch (err) {
+    // Save failed — keep everything in the draft so no data is lost.
+    document.getElementById('sb-status-text').textContent = 'فشل الحفظ';
+    console.error('[saveToFirestore] failed:', err);
+    showToast('فشل الحفظ في Firebase — تم الاحتفاظ بالمسودة المحلية', 'error');
+  }
+}
+
+function showDraftIndicator(show) {
+  document.getElementById('draftIndicator').classList.toggle('visible', show);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   KEYBOARD SHORTCUTS
+═══════════════════════════════════════════════════════════════ */
+function bindKeys() {
+  document.addEventListener('keydown', (e) => {
+    const ctrl = e.ctrlKey || e.metaKey;
+    if (ctrl && e.key === 's') { e.preventDefault(); saveToFirestore(); }
+    if (ctrl && e.key === 'f') { e.preventDefault(); toggleFindPanel(); }
+    if (ctrl && e.key === 'z') {
+      e.preventDefault();
+      if (e.shiftKey) doRedo();
+      else            doUndo();
+    }
+    if (ctrl && e.key === 'y') { e.preventDefault(); doRedo(); }
+    if (ctrl && e.key === 'c' && !e.shiftKey) {
+      // Only intercept if cell editor is NOT open (let normal text copy work inside editor)
+      if (!document.getElementById('cellEditor').classList.contains('active')) {
+        e.preventDefault();
+        copySelectionToClipboard();
+      }
+    }
+    if (ctrl && e.key === 'v') {
+      // Only intercept if cell editor is NOT open
+      if (!document.getElementById('cellEditor').classList.contains('active')) {
+        e.preventDefault();
+        navigator.clipboard.readText()
+          .then(text => { if (text) pasteFromClipboard(text); })
+          .catch(() => showToast('تعذّر الوصول للحافظة — تأكد من إذن المتصفح', 'warn'));
+      }
+    }
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay.open').forEach(m => closeModal(m.id));
+      document.getElementById('findPanel').classList.remove('open');
+      document.getElementById('branchPanel').classList.remove('open');
+      closeMobileSidebar();
+    }
+  });
+
+  // Close branch panel on outside click
+  document.addEventListener('click', (e) => {
+    const bp = document.getElementById('branchPanel');
+    if (bp.classList.contains('open') && !bp.contains(e.target) && !document.getElementById('branchBtn').contains(e.target)) {
+      bp.classList.remove('open');
+    }
+  });
+
+  // Formula bar → commit on Enter
+  document.getElementById('formulaInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && App.activeCell) {
+      commitCellEdit(App.activeCell.row, App.activeCell.colId, e.target.value);
+      e.target.blur();
+    }
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   UI HELPERS
+═══════════════════════════════════════════════════════════════ */
+function updateStatusBar() {
+  document.getElementById('sb-status-text').textContent = 'جاهز';
+}
+
+function showToast(msg, type = 'info') {
+  const icons = { success:'✓', error:'✕', info:'ℹ', warn:'⚠' };
+  const host  = document.getElementById('toastHost');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<span>${icons[type]}</span><span>${msg}</span>`;
+  host.appendChild(t);
+  setTimeout(() => {
+    t.style.transition = 'opacity 0.3s';
+    t.style.opacity    = '0';
+    setTimeout(() => t.remove(), 300);
+  }, 3200);
+}
+
+function showHoloWarning(msg) {
+  const el = document.getElementById('holoWarning');
+  document.getElementById('holoWarningText').textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+function colIndexToLetter(index) {
+  let s = ''; index++;
+  while (index > 0) {
+    const r = (index - 1) % 26;
+    s = String.fromCharCode(65 + r) + s;
+    index = Math.floor((index - 1) / 26);
+  }
+  return s;
+}
+
+function refreshLookupCols() { /* update selects when sheet changes */ }
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="js/firebase-sync.js"></script>
+<script src="js/firebase-init.js"></script>
+</body>
+</html>
