@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "default": "gr-pur",
+    "prod":    "gr-pur"
+  }
+}
