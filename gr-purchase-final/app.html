@@ -1939,12 +1939,82 @@ window.addEventListener('DOMContentLoaded', async () => {
   initRenderer();
   bindKeys();
   updateStatusBar();
-  await restoreSession();   // now async (IndexedDB)
+  await restoreSession();
+
+  // Load column definitions from Firestore before loading rows
+  await loadAllColumnDefinitions();   // now async (IndexedDB)
 
   // Load the first page of rows from Firestore (rows 0-199) immediately
   // so the sheet isn't blank on first open when there is existing data.
   loadVisibleRows(0);
 });
+
+
+async function loadAllColumnDefinitions() {
+  try {
+    const sync = window.GRFirebaseInit?.getSync?.();
+
+    if (!sync) {
+      console.warn('[Columns] Firebase sync is not ready.');
+      return;
+    }
+
+    const sheetNames = ['Purchases', 'Kasa', 'Barcode', 'Phinex'];
+
+    for (const sheetName of sheetNames) {
+      try {
+        const columns = await sync.loadColumns(App.branchId, sheetName);
+
+        if (!columns || !columns.length) continue;
+
+        const sheet = App.workbook.getSheet(sheetName);
+
+        // Replace current empty column structure
+        sheet.columns.length = 0;
+
+        for (const col of columns) {
+          sheet.addColumn(col);
+        }
+
+        // Keep worker synchronized
+        if (App.worker) {
+          await App.workerReady;
+          if (App.workerAvailable) {
+            await App.worker.send('LOAD_COLUMNS', {
+              branchId: App.branchId,
+              sheetName,
+              columns: sheet.columns
+            });
+          }
+        }
+      } catch (err) {
+        console.warn(`[Columns] Failed loading ${sheetName}:`, err);
+      }
+    }
+
+    // Refresh current sheet after columns have been loaded
+    const activeSheet = App.workbook.getSheet(App.sheetName);
+
+    App.renderer.setSheet({
+      totalRows: 50000,
+      columns: activeSheet.columns,
+      frozenRows: App.frozenRows,
+      frozenCols: App.frozenCols
+    });
+
+    document.getElementById('sb-colcount').textContent =
+      activeSheet.columns.length;
+
+    console.info(
+      '[Columns] Loaded:',
+      App.sheetName,
+      activeSheet.columns.length
+    );
+
+  } catch (err) {
+    console.error('[Columns] Global load failed:', err);
+  }
+}
 
 function initEngine() {
   const { Workbook } = self.GREngine;
@@ -3246,6 +3316,32 @@ async function deleteColumn() {
 
   const { removed } = sheet.removeColumn(_editingColId);
   if (!removed) return;
+
+  // Persist updated column structure to Firestore
+  try {
+    const sync = window.GRFirebaseInit?.getSync?.();
+
+    if (!sync) {
+      throw new Error('Firebase sync is not initialized');
+    }
+
+    await sync.saveColumns(
+      App.branchId,
+      App.sheetName,
+      sheet.columns
+    );
+
+    console.info(
+      '[Columns] Updated after delete:',
+      App.sheetName,
+      sheet.columns.length
+    );
+
+  } catch (firebaseErr) {
+    console.error('[Columns] Firestore delete-sync failed:', firebaseErr);
+    showHoloWarning('فشل تحديث الأعمدة في Firebase: ' + firebaseErr.message);
+    return;
+  }
 
   // Mirror the column structure to the worker and recompute
   await fullRecalcViaWorker(async () => {
