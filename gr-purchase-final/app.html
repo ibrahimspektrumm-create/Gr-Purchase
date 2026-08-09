@@ -452,17 +452,7 @@ a{color:inherit;text-decoration:none}
   overflow:hidden;
   background:var(--surface);
 }
-.grid-scroll{
-  position:absolute;inset:0;
-  overflow:scroll;
-  will-change:scroll-position;
-}
-/* Hide scrollbars on inner scroll, use custom ones */
-.grid-scroll::-webkit-scrollbar{display:none}
-.grid-spacer{
-  position:absolute;top:0;left:0;
-  pointer-events:none;
-}
+/* old static grid CSS removed — renderer builds its own DOM */
 
 /* Column header */
 .col-header{
@@ -1020,48 +1010,167 @@ a{color:inherit;text-decoration:none}
 /* ═══════════════════════════════════════════════════════════════
    RESPONSIVE
 ═══════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE — 768px and below
+═══════════════════════════════════════════════════════════════ */
 @media(max-width:768px){
-  :root{--sidebar-w:0px}
+  :root{
+    --sidebar-w: 0px;
+    --toolbar-h: 48px;
+    --tabbar-h:  40px;
+    --statusbar-h: 24px;
+  }
 
-  /* Sidebar becomes an overlay drawer instead of disappearing entirely —
-     Settings/Log/Find remain reachable via the hamburger button. */
+  /* ── Sidebar: slide-in drawer ── */
   .sidebar{
     position:fixed;
     top:0;right:0;bottom:0;
-    z-index:200;
+    width:200px;
+    z-index:300;
     transform:translateX(100%);
-    transition:transform var(--t-slow);
-    box-shadow:-8px 0 40px rgba(0,0,0,0.5);
+    transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    box-shadow:-8px 0 40px rgba(0,0,0,0.7);
   }
   .sidebar.mobile-open{transform:translateX(0)}
 
   .mobile-sidebar-backdrop{
     display:none;
-    position:fixed;inset:0;z-index:199;
-    background:rgba(2,4,8,0.6);
-    backdrop-filter:blur(2px);
+    position:fixed;inset:0;z-index:299;
+    background:rgba(2,4,8,0.7);
+    backdrop-filter:blur(3px);
   }
   .mobile-sidebar-backdrop.show{display:block}
 
+  /* ── Hamburger button ── */
   .mobile-menu-btn{display:flex}
 
-  /* Toolbar: scroll horizontally instead of clipping/overlapping buttons */
+  /* ── Topbar: compact with horizontal scroll for overflow buttons ── */
   .topbar{
+    height:var(--toolbar-h);
+    padding:0 8px;
+    gap:4px;
     overflow-x:auto;
     overflow-y:hidden;
     -webkit-overflow-scrolling:touch;
     scrollbar-width:none;
+    flex-wrap:nowrap;
   }
   .topbar::-webkit-scrollbar{display:none}
-  .tb-title{display:none} /* save space on small screens, sheet name + menu icon are enough */
 
-  .find-panel{min-width:calc(100vw - 32px)}
-  .modal-win{min-width:calc(100vw - 32px);padding:20px}
+  /* Hide decorative text on topbar — keep buttons only */
+  .tb-title{display:none}
+  .tb-sheet-name{display:none}
+  .tb-sep{display:none}
+
+  /* Smaller toolbar buttons */
+  .tb-btn{
+    height:30px;
+    padding:0 8px;
+    font-size:11px;
+    flex-shrink:0;
+    white-space:nowrap;
+  }
+  .tb-btn svg{width:13px;height:13px}
+
+  /* Draft indicator shorter text */
+  .draft-indicator span:last-child{display:none}
+
+  /* ── Formula bar ── */
+  .formula-bar{
+    height:32px;
+    padding:0 8px;
+    gap:6px;
+  }
+  .formula-cell-ref{
+    min-width:44px;
+    font-size:11px;
+    padding:3px 6px;
+  }
+
+  /* ── Tab bar ── */
+  .tabbar{
+    height:var(--tabbar-h);
+    padding:0 4px;
+    gap:2px;
+    overflow-x:auto;
+    scrollbar-width:none;
+    flex-wrap:nowrap;
+  }
+  .tabbar::-webkit-scrollbar{display:none}
+  .sheet-tab{
+    height:32px;
+    padding:0 10px;
+    font-size:11px;
+    flex-shrink:0;
+  }
+
+  /* ── Grid ── */
+  .grid-wrap{
+    touch-action:pan-x pan-y;
+  }
+
+  /* ── Sheet container fills remaining space ── */
+  .sheet-container{
+    flex:1;
+    overflow:hidden;
+  }
+
+  /* ── Status bar: compact ── */
+  .statusbar{
+    height:var(--statusbar-h);
+    padding:0 8px;
+    gap:8px;
+    font-size:10px;
+  }
+
+  /* ── Modals: full width ── */
+  .modal-overlay{padding:12px}
+  .modal-win{
+    min-width:0;
+    width:100%;
+    max-width:100%;
+    padding:18px;
+    border-radius:var(--r-lg);
+    max-height:85vh;
+    overflow-y:auto;
+  }
+  .modal-header{margin-bottom:16px;padding-bottom:12px}
+  .field-row{grid-template-columns:1fr}
+  .field-row-3{grid-template-columns:1fr}
+
+  /* ── Find panel: full width ── */
+  .find-panel{
+    min-width:0;
+    width:calc(100vw - 24px);
+    left:12px;
+    transform:none;
+    top:60px;
+  }
+  .find-panel.open{display:block}
+
+  /* ── Branch panel: wider ── */
+  .branch-panel{
+    right:8px;
+    min-width:180px;
+  }
+
+  /* ── Formula builder: single column ── */
+  .formula-builder{padding:10px}
+  .fb-col-picker{gap:4px}
+  .fb-col-chip{padding:4px 8px;font-size:11px}
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE — 480px and below (small phones)
+═══════════════════════════════════════════════════════════════ */
 @media(max-width:480px){
-  .tb-sheet-name{font-size:10px}
-  .sheet-tab{padding:0 10px;font-size:11px}
+  .topbar{padding:0 6px;gap:3px}
+  .tb-btn{height:28px;padding:0 6px;font-size:10px}
+  .sheet-tab{padding:0 8px;font-size:10px}
+  .statusbar{height:22px;font-size:9px}
+
+  /* On very small screens, show only sheet name icon + essential buttons */
+  .tb-btn.warn{display:none}  /* hide Close Invoice on tiny screens */
 }
 </style>
 </head>
@@ -1273,46 +1382,18 @@ a{color:inherit;text-decoration:none}
 
     <!-- Sheet Container -->
     <div class="sheet-container" id="sheetContainer">
-      <div class="grid-wrap" id="gridWrap">
-
-        <!-- Scroll container -->
-        <div class="grid-scroll" id="gridScroll">
-          <div class="grid-spacer" id="gridSpacer"></div>
-        </div>
-
-        <!-- Column header (sticky) -->
-        <div class="col-header" id="colHeader">
-          <div class="ch-corner" onclick="selectAll()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <rect x="3" y="3" width="18" height="18" rx="2"/>
-            </svg>
-          </div>
-        </div>
-
-        <!-- Row header -->
-        <div class="row-header" id="rowHeader"></div>
-
-        <!-- Cell viewport -->
-        <div class="cell-viewport" id="cellViewport">
-          <!-- Cell selection overlay -->
-          <div class="cell-selection" id="cellSelection"></div>
-          <!-- Inline editor -->
-          <div class="cell-editor" id="cellEditor">
-            <input type="text" id="cellEditorInput" spellcheck="false">
-          </div>
-          <!-- Dropdown -->
-          <div class="cell-dropdown" id="cellDropdown"></div>
-        </div>
-
-        <!-- Custom scrollbars -->
-        <div class="h-scrollbar" id="hScrollbar">
-          <div class="scroll-thumb" id="hThumb"></div>
-        </div>
-        <div class="v-scrollbar" id="vScrollbar">
-          <div class="scroll-thumb" id="vThumb"></div>
-        </div>
-      </div>
+      <!-- gridWrap stays EMPTY — VirtualRenderer builds all DOM elements here -->
+      <div class="grid-wrap" id="gridWrap"></div>
     </div>
+
+    <!-- Cell editor — fixed overlay, positioned by openCellEditor() -->
+    <div id="cellEditor" style="display:none;position:fixed;z-index:500;background:#080F1C;border:2px solid #00D4FF;box-shadow:0 0 20px rgba(0,212,255,0.25);border-radius:2px;box-sizing:border-box">
+      <input type="text" id="cellEditorInput" spellcheck="false"
+        style="width:100%;height:100%;padding:0 8px;font-size:13px;font-family:Cairo,sans-serif;color:#E8F4FF;caret-color:#00D4FF;background:transparent;border:none;outline:none;direction:rtl">
+    </div>
+
+    <!-- Autocomplete dropdown — fixed overlay, positioned by JS -->
+    <div id="cellDropdown" style="display:none;position:fixed;z-index:501;background:#0E1B2E;border:1px solid #1A4070;border-top:none;border-radius:0 0 10px 10px;box-shadow:0 12px 40px rgba(0,0,0,0.6);max-height:200px;overflow-y:auto;min-width:160px"></div>
 
     <!-- Status Bar -->
     <div class="statusbar">
@@ -2592,22 +2673,18 @@ function openCellEditor(row, col, colId, targetEl) {
   const editor = document.getElementById('cellEditor');
   const input  = document.getElementById('cellEditorInput');
 
+  // Use getBoundingClientRect directly — editor is fixed-position now
   const rect = targetEl.getBoundingClientRect();
-  const vpRect = document.getElementById('cellViewport').getBoundingClientRect();
-
-  editor.style.top    = (rect.top  - vpRect.top)  + 'px';
-  editor.style.left   = (rect.left - vpRect.left)  + 'px';
+  editor.style.top    = rect.top    + 'px';
+  editor.style.left   = rect.left   + 'px';
   editor.style.width  = rect.width  + 'px';
   editor.style.height = rect.height + 'px';
-  editor.classList.add('active');
+  editor.style.display = 'block';
 
   const val = App.workbook.getSheet(App.sheetName).displayValue(row, colId);
   input.value = val ?? '';
   input.focus();
   input.select();
-
-  // Check for validation dropdown
-  const { ValidationRegistry } = self.GREngine;
 
   input.onkeydown = (e) => {
     if (e.key === 'Enter' || e.key === 'Tab') {
@@ -2634,8 +2711,9 @@ function openCellEditor(row, col, colId, targetEl) {
 }
 
 function closeCellEditor() {
-  document.getElementById('cellEditor').classList.remove('active');
-  document.getElementById('cellDropdown').classList.remove('open');
+  const editor = document.getElementById('cellEditor');
+  editor.style.display = 'none';
+  document.getElementById('cellDropdown').style.display = 'none';
 }
 
 async function commitCellEdit(row, colId, value) {
@@ -3802,14 +3880,14 @@ function bindKeys() {
     if (ctrl && e.key === 'y') { e.preventDefault(); doRedo(); }
     if (ctrl && e.key === 'c' && !e.shiftKey) {
       // Only intercept if cell editor is NOT open (let normal text copy work inside editor)
-      if (!document.getElementById('cellEditor').classList.contains('active')) {
+      if (!document.getElementById('cellEditor').style.display !== 'none') {
         e.preventDefault();
         copySelectionToClipboard();
       }
     }
     if (ctrl && e.key === 'v') {
       // Only intercept if cell editor is NOT open
-      if (!document.getElementById('cellEditor').classList.contains('active')) {
+      if (!document.getElementById('cellEditor').style.display !== 'none') {
         e.preventDefault();
         navigator.clipboard.readText()
           .then(text => { if (text) pasteFromClipboard(text); })
