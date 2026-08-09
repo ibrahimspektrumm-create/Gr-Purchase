@@ -3237,6 +3237,188 @@ function onColTypeChange() {
   document.getElementById('currencySection').style.display = type === 'currency' ? 'block' : 'none';
 }
 
+
+/* ═══════════════════════════════════════════════════════════════
+   COLUMN SCHEMA MANAGER
+   Single source-of-truth synchronization:
+   App.workbook → Worker → Firestore → Renderer
+═══════════════════════════════════════════════════════════════ */
+
+async function getColumnSync() {
+  try {
+    if (!window.GRFirebaseInit) return null;
+
+    const sync = await window.GRFirebaseInit.boot();
+
+    if (!sync || !sync.isSignedIn) {
+      console.warn('[ColumnSchema] Firebase unavailable or user not signed in');
+      return null;
+    }
+
+    return sync;
+  } catch (err) {
+    console.error('[ColumnSchema] Firebase boot failed:', err);
+    return null;
+  }
+}
+
+async function persistColumnSchema(sheetName = App.sheetName) {
+  const sheet = App.workbook.getSheet(sheetName);
+
+  if (!sheet) {
+    throw new Error(`Sheet not found: ${sheetName}`);
+  }
+
+  const columns = sheet.columns.map((col, index) => ({
+    ...col,
+    index
+  }));
+
+  /* 1. Main-thread model */
+  sheet.columns = columns;
+
+  /* 2. Worker model */
+  if (App.worker && App.workerAvailable) {
+    await App.workerReady;
+
+    if (App.workerAvailable) {
+      await App.worker.send('LOAD_COLUMNS', {
+        branchId: App.branchId,
+        sheetName,
+        columns
+      });
+    }
+  }
+
+  /* 3. Firestore */
+  const sync = await getColumnSync();
+
+  if (sync) {
+    await sync.saveColumns(
+      App.branchId,
+      sheetName,
+      columns
+    );
+  }
+
+  /* 4. Renderer */
+  if (App.renderer && App.sheetName === sheetName) {
+    App.renderer.setSheet({
+      totalRows: 50_000,
+      columns,
+      frozenRows: App.frozenRows,
+      frozenCols: App.frozenCols
+    });
+
+    App.renderer.render();
+
+    refreshViewport();
+
+    const counter = document.getElementById('sb-colcount');
+    if (counter) {
+      counter.textContent = columns.length;
+    }
+  }
+
+  console.info(
+    '[ColumnSchema] SYNC COMPLETE',
+    sheetName,
+    columns.length
+  );
+
+  return columns;
+}
+
+async function loadColumnSchema(sheetName = App.sheetName) {
+  const sync = await getColumnSync();
+
+  if (!sync) {
+    console.warn('[ColumnSchema] Cannot load schema: Firebase unavailable');
+    return [];
+  }
+
+  const columns = await sync.loadColumns(
+    App.branchId,
+    sheetName
+  );
+
+  if (!Array.isArray(columns)) {
+    throw new Error('Invalid column schema returned from Firestore');
+  }
+
+  const sheet = App.workbook.getSheet(sheetName);
+
+  if (!sheet) {
+    throw new Error(`Sheet not found: ${sheetName}`);
+  }
+
+  /* Replace local schema */
+  sheet.columns = columns.map((col, index) => ({
+    ...col,
+    index
+  }));
+
+  /* Mirror into worker */
+  if (App.worker && App.workerAvailable) {
+    await App.workerReady;
+
+    if (App.workerAvailable) {
+      await App.worker.send('LOAD_COLUMNS', {
+        branchId: App.branchId,
+        sheetName,
+        columns: sheet.columns
+      });
+    }
+  }
+
+  /* Render */
+  if (App.renderer && App.sheetName === sheetName) {
+    App.renderer.setSheet({
+      totalRows: 50_000,
+      columns: sheet.columns,
+      frozenRows: App.frozenRows,
+      frozenCols: App.frozenCols
+    });
+
+    App.renderer.render();
+
+    refreshViewport();
+
+    const counter = document.getElementById('sb-colcount');
+    if (counter) {
+      counter.textContent = sheet.columns.length;
+    }
+  }
+
+  console.info(
+    '[ColumnSchema] LOADED',
+    sheetName,
+    sheet.columns.length
+  );
+
+  return sheet.columns;
+}
+
+async function loadAllColumnSchemas() {
+  const sheets = [
+    'Purchases',
+    'Kasa',
+    'Barcode',
+    'Phinex'
+  ];
+
+  for (const sheetName of sheets) {
+    try {
+      await loadColumnSchema(sheetName);
+    } catch (err) {
+      console.warn(
+        `[ColumnSchema] Failed loading ${sheetName}:`,
+        err
+      );
+    }
+  }
+}
+
 async function saveColumn() {
   const name   = document.getElementById('col-name').value.trim();
   const type   = document.getElementById('col-type').value;
@@ -3271,6 +3453,67 @@ async function saveColumn() {
     sheet.updateColumn(_editingColId, def);
   } else {
     sheet.addColumn(def);
+
+  // =====================================================
+  // COLUMN PERSISTENCE — SINGLE SOURCE OF TRUTH
+  // =====================================================
+  try {
+    const firebaseSync =
+      window.GRFirebaseInit &&
+      typeof window.GRFirebaseInit.getSync === 'function'
+        ? window.GRFirebaseInit.getSync()
+        : null;
+
+    if (firebaseSync && typeof firebaseSync.saveColumns === 'function') {
+      await firebaseSync.saveColumns(
+        App.branchId,
+        App.sheetName,
+        sheet.columns
+      );
+
+      console.info(
+        '[Columns] Firestore synchronized:',
+        App.sheetName,
+        sheet.columns.length
+      );
+    } else {
+      console.warn('[Columns] Firebase column sync unavailable.');
+    }
+  } catch (err) {
+    console.error('[Columns] Firestore synchronization failed:', err);
+
+    if (typeof showHoloWarning === 'function') {
+      showHoloWarning(
+        'تم إنشاء العمود محليًا لكن فشل حفظه في Firebase: ' +
+        (err?.message || err)
+      );
+    }
+  }
+
+  // =====================================================
+  // FORCE UI REFRESH
+  // =====================================================
+  try {
+    if (typeof render === 'function') {
+      render();
+    } else if (typeof renderSheet === 'function') {
+      renderSheet();
+    } else if (typeof renderCurrentSheet === 'function') {
+      renderCurrentSheet();
+    } else {
+      window.dispatchEvent(
+        new CustomEvent('gr:columns-changed', {
+          detail: {
+            sheetName: App.sheetName,
+            columns: sheet.columns
+          }
+        })
+      );
+    }
+  } catch (renderErr) {
+    console.warn('[Columns] UI refresh warning:', renderErr);
+  }
+
   }
 
   // Full recalc — mirror the updated column structure to the worker first
