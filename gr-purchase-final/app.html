@@ -2020,35 +2020,12 @@ function initEngine() {
   const { Workbook } = self.GREngine;
   App.workbook = new Workbook(App.branchId);
 
-  // Initialize the formula worker. Both the main-thread workbook and the
-  // worker-side workbook start empty and are kept in sync from this point
-  // forward via mirrored writes (see commitCellEdit, saveColumn, etc.).
-  // This moves the expensive part — topological sort + formula evaluation
-  // across potentially thousands of rows — off the main thread, while
-  // App.workbook stays the source of truth for instant synchronous reads
-  // (rendering, validation, summaries, export) so nothing about reading
-  // data changes behavior.
-  App.worker = new window.GRWorkspace.WorkerBridge('js/formula.worker.js');
-  App.workerReady = App.worker.send('INIT_WORKBOOK', { branchId: App.branchId })
-    .then(async () => {
-      App.workerAvailable = true;
-      // Sync column definitions for all 4 sheets immediately so the worker
-      // has the correct structure before any edits arrive. This is a no-op
-      // for fresh sessions (empty columns arrays), but critical after draft
-      // restore or future Firestore loads that pre-populate App.workbook.
-      const sheetNames = ['Purchases', 'Kasa', 'Barcode', 'Phinex'];
-      await Promise.all(sheetNames.map(sn => {
-        const cols = App.workbook.getSheet(sn)?.columns ?? [];
-        if (!cols.length) return Promise.resolve();
-        return App.worker.send('LOAD_COLUMNS', {
-          branchId: App.branchId, sheetName: sn, columns: cols,
-        });
-      }));
-    })
-    .catch(err => {
-      console.warn('[Worker] Init failed, falling back to main-thread-only computation:', err);
-      App.workerAvailable = false;
-    });
+  // Formula Worker disabled: main-thread engine is the single source of truth.
+  App.worker = null;
+  App.workerAvailable = false;
+  App.workerReady = Promise.resolve();
+
+  console.info('[Engine] Main-thread mode enabled');
 }
 
 function initRenderer() {
