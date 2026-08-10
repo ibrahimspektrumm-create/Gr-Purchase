@@ -27,7 +27,7 @@
    import { initializeApp } from 'firebase/app';
 ───────────────────────────────────────────────────────────── */
 
-const SHEET_NAMES    = ['Purchases', 'Kasa', 'Barcode', 'Phinex'];
+const FIREBASE_SHEET_NAMES    = ['Purchases', 'Kasa', 'Barcode', 'Phinex'];
 const MAX_BATCH_OPS  = 490;   // Firestore limit is 500, stay under
 const RETRY_DELAYS   = [300, 800, 2000, 5000]; // ms, exponential backoff
 
