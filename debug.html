@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>GR Debug</title>
+<style>
+body{font-family:monospace;background:#020408;color:#00D4FF;padding:20px}
+.ok{color:#10B981}.err{color:#EF4444}.warn{color:#F59E0B}
+#log{white-space:pre-wrap;font-size:13px;line-height:1.8}
+#grid-test{width:100%;height:300px;background:#0E1B2E;border:1px solid #133058;margin-top:20px}
+</style>
+</head>
+<body>
+<h2>GR Purchase — Debug Page</h2>
+<div id="log">جارٍ الفحص...\n</div>
+<div id="grid-test"></div>
+
+<script src="js/engine.js"></script>
+<script src="js/renderer.js"></script>
+<script src="js/workspace.js"></script>
+<script>
+const log = document.getElementById('log');
+function ok(msg)   { log.textContent += '✓ ' + msg + '\n'; }
+function err(msg)  { log.textContent += '✕ ' + msg + '\n'; }
+function warn(msg) { log.textContent += '⚠ ' + msg + '\n'; }
+
+// 1. Check libraries loaded
+if (self.GREngine)    ok('engine.js loaded — GREngine available');
+else                  err('engine.js FAILED to load — GREngine is undefined');
+
+if (self.GRRenderer)  ok('renderer.js loaded — GRRenderer available');
+else                  err('renderer.js FAILED to load — GRRenderer is undefined');
+
+if (window.GRWorkspace) ok('workspace.js loaded — GRWorkspace available');
+else                    warn('workspace.js not loaded (WorkerBridge unavailable)');
+
+// 2. Test Workbook creation
+try {
+  const { Workbook, COL_TYPES, FORMULA_TYPES } = self.GREngine;
+  const wb = new Workbook('branch-01');
+  ok('Workbook created — ' + wb.sheets.size + ' sheets');
+
+  const sheet = wb.getSheet('Purchases');
+  const col1 = sheet.addColumn({ name: 'اسم المنتج', type: COL_TYPES.TEXT });
+  const col2 = sheet.addColumn({ name: 'الكمية',     type: COL_TYPES.NUMBER });
+  const col3 = sheet.addColumn({ name: 'السعر',      type: COL_TYPES.CURRENCY });
+  ok('3 columns added: ' + sheet.columns.map(c=>c.name).join(', '));
+
+  sheet.setCell(0, col1.id, 'شاي أحمر');
+  sheet.setCell(0, col2.id, 10);
+  sheet.setCell(0, col3.id, 5.5);
+  wb.recalc();
+  ok('Cell data set — row0: ' + sheet.displayValue(0, col1.id) + ', qty=' + sheet.displayValue(0, col2.id));
+
+  // 3. Test Renderer
+  const container = document.getElementById('grid-test');
+  const { VirtualRenderer } = self.GRRenderer;
+  const renderer = new VirtualRenderer(container, { frozenRows: 0, frozenCols: 0 });
+  ok('VirtualRenderer created');
+
+  renderer.setSheet({ totalRows: 100, columns: sheet.columns, frozenRows: 0, frozenCols: 0 });
+  ok('renderer.setSheet() called — ' + sheet.columns.length + ' columns');
+
+  // Build display data
+  const viewData = {};
+  for (const [row, rowMap] of sheet.cells) {
+    viewData[row] = {};
+    for (const [colId, cell] of rowMap) {
+      const val = cell.m !== null ? cell.m : cell.v;
+      if (val !== null) viewData[row][colId] = val;
+    }
+  }
+  renderer.loadData(viewData);
+  ok('renderer.loadData() called');
+
+  // Check if DOM was built
+  const children = container.children.length;
+  ok('gridWrap children after render: ' + children + (children > 0 ? ' ✓' : ' ← PROBLEM: should be > 0'));
+
+  log.textContent += '\n--- DONE ---\n';
+} catch(e) {
+  err('Exception: ' + e.message);
+  err('Stack: ' + e.stack?.split('\n').slice(0,3).join(' | '));
+}
+</script>
+</body>
+</html>
