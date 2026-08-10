@@ -12,7 +12,7 @@
 
 'use strict';
 
-importScripts('engine.js');
+if (!self.GREngine) { importScripts('engine.js'); }
 
 const { Workbook, ClipboardParser } = self.GREngine;
 
