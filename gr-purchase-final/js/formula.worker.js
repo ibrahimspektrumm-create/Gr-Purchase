@@ -14,7 +14,8 @@
 
 if (!self.GREngine) { importScripts('engine.js'); }
 
-const { Workbook, ClipboardParser } = self.GREngine;
+const WorkbookCtor = self.GREngine.Workbook;
+const { ClipboardParser } = self.GREngine;
 
 /** Active workbooks keyed by branchId */
 const workbooks = new Map();
@@ -43,7 +44,7 @@ function dispatch(type, payload) {
 
     /* ── Workbook lifecycle ── */
     case 'INIT_WORKBOOK': {
-      const wb = new Workbook(payload.branchId);
+      const wb = new WorkbookCtor(payload.branchId);
       workbooks.set(payload.branchId, wb);
       return { ok: true };
     }
@@ -270,8 +271,8 @@ function dispatch(type, payload) {
      * }
      */
     case 'STATELESS_RECALC': {
-      const { Workbook } = self.GREngine;
-      const tempWb    = new Workbook('__stateless__');
+      const WorkbookStatelessCtor = self.GREngine.Workbook;
+      const tempWb    = new WorkbookStatelessCtor('__stateless__');
       const tempSheet = tempWb.getSheet('Purchases'); // any sheet works, we only use its column/cell machinery
 
       tempSheet.columns = payload.columns;
