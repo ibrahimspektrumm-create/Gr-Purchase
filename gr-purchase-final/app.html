@@ -2018,9 +2018,17 @@ async function loadAllColumnDefinitions() {
 
 function initEngine() {
   const { Workbook } = self.GREngine;
+
+  if (!Workbook) {
+    throw new Error('[Engine] GREngine.Workbook is unavailable');
+  }
+
   App.workbook = new Workbook(App.branchId);
 
-  // Formula Worker disabled: main-thread engine is the single source of truth.
+  // ==========================================================
+  // MAIN THREAD ONLY
+  // Formula Worker is intentionally disabled.
+  // ==========================================================
   App.worker = null;
   App.workerAvailable = false;
   App.workerReady = Promise.resolve();
